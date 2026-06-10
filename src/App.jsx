@@ -2,11 +2,11 @@ import { dbSet, dbGet, dbSubscribe } from "./firebase";
 import { useState, useEffect } from "react";
 
 const USERS_CONFIG = {
-  "Teo":   { pin:"1111", color:"#F59E0B", light:"#F59E0B18", avatar:"T", isAdmin:true },
-  "Νίκος": { pin:"2222", color:"#22D3EE", light:"#22D3EE18", avatar:"Ν" },
-  "Τάσος": { pin:"3333", color:"#A78BFA", light:"#A78BFA18", avatar:"Τ" },
+  "Teo":   { pin:"1606", color:"#F59E0B", light:"#F59E0B18", avatar:"T", isAdmin:true },
+  "ΞΞ―ΞΊΞΏΟ‚": { pin:"2406", color:"#22D3EE", light:"#22D3EE18", avatar:"Ξ" },
+  "Ξ¤Ξ¬ΟƒΞΏΟ‚": { pin:"0802", color:"#A78BFA", light:"#A78BFA18", avatar:"Ξ¤" },
 };
-const ALL_USERS = Object.keys(USERS_CONFIG); // Teo συμμετέχει κανονικά + έχει admin δικαιώματα
+const ALL_USERS = Object.keys(USERS_CONFIG); // Teo ΟƒΟ…ΞΌΞΌΞµΟ„Ξ­Ο‡ΞµΞΉ ΞΊΞ±Ξ½ΞΏΞ½ΞΉΞΊΞ¬ + Ξ­Ο‡ΞµΞΉ admin Ξ΄ΞΉΞΊΞ±ΞΉΟΞΌΞ±Ο„Ξ±
 
 const FLAGS = {
   MEX:"\uD83C\uDDF2\uD83C\uDDFD", ZAF:"\uD83C\uDDFF\uD83C\uDDE6", KOR:"\uD83C\uDDF0\uD83C\uDDF7", CZE:"\uD83C\uDDE8\uD83C\uDDFF",
@@ -25,184 +25,184 @@ const FLAGS = {
 function FL(code) { return FLAGS[code] || ""; }
 function t(code, name) { return { code, name }; }
 
-/* ══════════════════════════════════════════════════
+/* β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•
    MARKETS
-══════════════════════════════════════════════════ */
+β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β• */
 const MKT_IDS = ["1x2","dc","ou","btts","ht","htou","home_ou","away_ou","ggou"];
 
 function buildMarkets(home, away) {
   return [
-    { id:"1x2", label:"Τελικό Αποτέλεσμα",
-      options:[{id:"1",label:"1 – "+home.name},{id:"X",label:"Χ – Ισοπαλία"},{id:"2",label:"2 – "+away.name}] },
-    { id:"dc", label:"Διπλή Ευκαιρία",
+    { id:"1x2", label:"Ξ¤ΞµΞ»ΞΉΞΊΟ Ξ‘Ο€ΞΏΟ„Ξ­Ξ»ΞµΟƒΞΌΞ±",
+      options:[{id:"1",label:"1 β€“ "+home.name},{id:"X",label:"Ξ§ β€“ Ξ™ΟƒΞΏΟ€Ξ±Ξ»Ξ―Ξ±"},{id:"2",label:"2 β€“ "+away.name}] },
+    { id:"dc", label:"Ξ”ΞΉΟ€Ξ»Ξ® Ξ•Ο…ΞΊΞ±ΞΉΟΞ―Ξ±",
       options:[{id:"1X",label:"1X"},{id:"12",label:"12"},{id:"X2",label:"X2"}] },
-    { id:"ou", label:"Γκολ Over/Under",
+    { id:"ou", label:"Ξ“ΞΊΞΏΞ» Over/Under",
       options:[{id:"o15",label:"Over 1.5"},{id:"u15",label:"Under 1.5"},{id:"o25",label:"Over 2.5"},{id:"u25",label:"Under 2.5"},{id:"o35",label:"Over 3.5"},{id:"u35",label:"Under 3.5"}] },
-    { id:"btts", label:"Να σκοράρουν και οι 2",
-      options:[{id:"gg",label:"GG – Ναι"},{id:"ng",label:"NG – Όχι"}] },
-    { id:"ht", label:"1ο Ημίχρονο – Αποτέλεσμα",
-      options:[{id:"ht1",label:"1 – "+home.name},{id:"htx",label:"Χ – Ισοπαλία"},{id:"ht2",label:"2 – "+away.name}] },
-    { id:"htou", label:"1ο Ημίχρονο – Over/Under",
+    { id:"btts", label:"ΞΞ± ΟƒΞΊΞΏΟΞ¬ΟΞΏΟ…Ξ½ ΞΊΞ±ΞΉ ΞΏΞΉ 2",
+      options:[{id:"gg",label:"GG β€“ ΞΞ±ΞΉ"},{id:"ng",label:"NG β€“ ΞΟ‡ΞΉ"}] },
+    { id:"ht", label:"1ΞΏ Ξ—ΞΌΞ―Ο‡ΟΞΏΞ½ΞΏ β€“ Ξ‘Ο€ΞΏΟ„Ξ­Ξ»ΞµΟƒΞΌΞ±",
+      options:[{id:"ht1",label:"1 β€“ "+home.name},{id:"htx",label:"Ξ§ β€“ Ξ™ΟƒΞΏΟ€Ξ±Ξ»Ξ―Ξ±"},{id:"ht2",label:"2 β€“ "+away.name}] },
+    { id:"htou", label:"1ΞΏ Ξ—ΞΌΞ―Ο‡ΟΞΏΞ½ΞΏ β€“ Over/Under",
       options:[{id:"hto05",label:"Over 0.5"},{id:"htu05",label:"Under 0.5"},{id:"hto15",label:"Over 1.5"},{id:"htu15",label:"Under 1.5"}] },
-    { id:"home_ou", label:home.name+" – Γκολ Over/Under",
+    { id:"home_ou", label:home.name+" β€“ Ξ“ΞΊΞΏΞ» Over/Under",
       options:[{id:"ho05",label:"Over 0.5"},{id:"hu05",label:"Under 0.5"},{id:"ho15",label:"Over 1.5"},{id:"hu15",label:"Under 1.5"}] },
-    { id:"away_ou", label:away.name+" – Γκολ Over/Under",
+    { id:"away_ou", label:away.name+" β€“ Ξ“ΞΊΞΏΞ» Over/Under",
       options:[{id:"ao05",label:"Over 0.5"},{id:"au05",label:"Under 0.5"},{id:"ao15",label:"Over 1.5"},{id:"au15",label:"Under 1.5"}] },
-    { id:"ggou", label:"Να σκοράρουν και οι 2 ή Over 2.5",
-      options:[{id:"ggou_y",label:"Ναι"},{id:"ggou_n",label:"Όχι"}] },
+    { id:"ggou", label:"ΞΞ± ΟƒΞΊΞΏΟΞ¬ΟΞΏΟ…Ξ½ ΞΊΞ±ΞΉ ΞΏΞΉ 2 Ξ® Over 2.5",
+      options:[{id:"ggou_y",label:"ΞΞ±ΞΉ"},{id:"ggou_n",label:"ΞΟ‡ΞΉ"}] },
   ];
 }
 
-/* ══════════════════════════════════════════════════
+/* β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•
    MATCHES
-══════════════════════════════════════════════════ */
+β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β• */
 const DAYS = [
-  { label:"Πέμ 11/06", sub:"2 ματς", matches:[
-    {id:1,  grp:"A", time:"22:00", home:t("MEX","Μεξικό"),       away:t("ZAF","Ν. Αφρική"),     venue:"Azteca, Πόλη Μεξικού"},
-    {id:2,  grp:"A", time:"05:00✦",home:t("KOR","Ν. Κορέα"),      away:t("CZE","Τσεχία"),         venue:"Akron, Γουαδαλαχάρα"},
+  { label:"Ξ Ξ­ΞΌ 11/06", sub:"2 ΞΌΞ±Ο„Ο‚", matches:[
+    {id:1,  grp:"A", time:"22:00", home:t("MEX","ΞΞµΞΎΞΉΞΊΟ"),       away:t("ZAF","Ξ. Ξ‘Ο†ΟΞΉΞΊΞ®"),     venue:"Azteca, Ξ ΟΞ»Ξ· ΞΞµΞΎΞΉΞΊΞΏΟ"},
+    {id:2,  grp:"A", time:"05:00β¦",home:t("KOR","Ξ. ΞΞΏΟΞ­Ξ±"),      away:t("CZE","Ξ¤ΟƒΞµΟ‡Ξ―Ξ±"),         venue:"Akron, Ξ“ΞΏΟ…Ξ±Ξ΄Ξ±Ξ»Ξ±Ο‡Ξ¬ΟΞ±"},
   ]},
-  { label:"Παρ 12/06", sub:"2 ματς", matches:[
-    {id:3,  grp:"B", time:"22:00", home:t("CAN","Καναδάς"),       away:t("BIH","Βοσνία-Ερζ."),   venue:"BMO Field, Τορόντο"},
-    {id:4,  grp:"D", time:"04:00✦",home:t("USA","ΗΠΑ"),           away:t("PAR","Παραγουάη"),      venue:"SoFi Stadium, LA"},
+  { label:"Ξ Ξ±Ο 12/06", sub:"2 ΞΌΞ±Ο„Ο‚", matches:[
+    {id:3,  grp:"B", time:"22:00", home:t("CAN","ΞΞ±Ξ½Ξ±Ξ΄Ξ¬Ο‚"),       away:t("BIH","Ξ’ΞΏΟƒΞ½Ξ―Ξ±-Ξ•ΟΞ¶."),   venue:"BMO Field, Ξ¤ΞΏΟΟΞ½Ο„ΞΏ"},
+    {id:4,  grp:"D", time:"04:00β¦",home:t("USA","Ξ—Ξ Ξ‘"),           away:t("PAR","Ξ Ξ±ΟΞ±Ξ³ΞΏΟ…Ξ¬Ξ·"),      venue:"SoFi Stadium, LA"},
   ]},
-  { label:"Σάβ 13/06", sub:"4 ματς", matches:[
-    {id:5,  grp:"B", time:"22:00", home:t("QAT","Κατάρ"),         away:t("SUI","Ελβετία"),        venue:"Levi's Stadium, SF"},
-    {id:6,  grp:"C", time:"01:00✦",home:t("BRA","Βραζιλία"),      away:t("MAR","Μαρόκο"),         venue:"MetLife Stadium, NJ"},
-    {id:7,  grp:"C", time:"04:00✦",home:t("HAI","Αϊτή"),          away:t("SCO","Σκωτία"),         venue:"Gillette Stadium, Boston"},
-    {id:8,  grp:"D", time:"07:00✦",home:t("AUS","Αυστραλία"),     away:t("TUR","Τουρκία"),        venue:"BC Place, Βανκούβερ"},
+  { label:"Ξ£Ξ¬Ξ² 13/06", sub:"4 ΞΌΞ±Ο„Ο‚", matches:[
+    {id:5,  grp:"B", time:"22:00", home:t("QAT","ΞΞ±Ο„Ξ¬Ο"),         away:t("SUI","Ξ•Ξ»Ξ²ΞµΟ„Ξ―Ξ±"),        venue:"Levi's Stadium, SF"},
+    {id:6,  grp:"C", time:"01:00β¦",home:t("BRA","Ξ’ΟΞ±Ξ¶ΞΉΞ»Ξ―Ξ±"),      away:t("MAR","ΞΞ±ΟΟΞΊΞΏ"),         venue:"MetLife Stadium, NJ"},
+    {id:7,  grp:"C", time:"04:00β¦",home:t("HAI","Ξ‘ΟΟ„Ξ®"),          away:t("SCO","Ξ£ΞΊΟ‰Ο„Ξ―Ξ±"),         venue:"Gillette Stadium, Boston"},
+    {id:8,  grp:"D", time:"07:00β¦",home:t("AUS","Ξ‘Ο…ΟƒΟ„ΟΞ±Ξ»Ξ―Ξ±"),     away:t("TUR","Ξ¤ΞΏΟ…ΟΞΊΞ―Ξ±"),        venue:"BC Place, Ξ’Ξ±Ξ½ΞΊΞΏΟΞ²ΞµΟ"},
   ]},
-  { label:"Κυρ 14/06", sub:"4 ματς", matches:[
-    {id:9,  grp:"E", time:"20:00", home:t("GER","Γερμανία"),      away:t("CUW","Κουρασάο"),       venue:"NRG Stadium, Houston"},
-    {id:10, grp:"F", time:"23:00", home:t("NED","Ολλανδία"),      away:t("JPN","Ιαπωνία"),        venue:"AT&T Stadium, Dallas"},
-    {id:11, grp:"E", time:"02:00✦",home:t("CIV","Ακτή Ελεφ."),   away:t("ECU","Εκουαδόρ"),       venue:"Lincoln Financial, Philly"},
-    {id:12, grp:"F", time:"05:00✦",home:t("SWE","Σουηδία"),       away:t("TUN","Τυνησία"),        venue:"Estadio BBVA, Μοντερέι"},
+  { label:"ΞΟ…Ο 14/06", sub:"4 ΞΌΞ±Ο„Ο‚", matches:[
+    {id:9,  grp:"E", time:"20:00", home:t("GER","Ξ“ΞµΟΞΌΞ±Ξ½Ξ―Ξ±"),      away:t("CUW","ΞΞΏΟ…ΟΞ±ΟƒΞ¬ΞΏ"),       venue:"NRG Stadium, Houston"},
+    {id:10, grp:"F", time:"23:00", home:t("NED","ΞΞ»Ξ»Ξ±Ξ½Ξ΄Ξ―Ξ±"),      away:t("JPN","Ξ™Ξ±Ο€Ο‰Ξ½Ξ―Ξ±"),        venue:"AT&T Stadium, Dallas"},
+    {id:11, grp:"E", time:"02:00β¦",home:t("CIV","Ξ‘ΞΊΟ„Ξ® Ξ•Ξ»ΞµΟ†."),   away:t("ECU","Ξ•ΞΊΞΏΟ…Ξ±Ξ΄ΟΟ"),       venue:"Lincoln Financial, Philly"},
+    {id:12, grp:"F", time:"05:00β¦",home:t("SWE","Ξ£ΞΏΟ…Ξ·Ξ΄Ξ―Ξ±"),       away:t("TUN","Ξ¤Ο…Ξ½Ξ·ΟƒΞ―Ξ±"),        venue:"Estadio BBVA, ΞΞΏΞ½Ο„ΞµΟΞ­ΞΉ"},
   ]},
-  { label:"Δευ 15/06", sub:"4 ματς", matches:[
-    {id:13, grp:"H", time:"19:00", home:t("ESP","Ισπανία"),       away:t("CPV","Πρ. Ακρωτήριο"),  venue:"Mercedes-Benz, Atlanta"},
-    {id:14, grp:"G", time:"22:00", home:t("BEL","Βέλγιο"),        away:t("EGY","Αίγυπτος"),       venue:"Lumen Field, Seattle"},
-    {id:15, grp:"H", time:"01:00✦",home:t("SAU","Σ. Αραβία"),    away:t("URU","Ουρουγουάη"),     venue:"Hard Rock Stadium, Miami"},
-    {id:16, grp:"G", time:"04:00✦",home:t("IRN","Ιράν"),          away:t("NZL","Ν. Ζηλανδία"),    venue:"SoFi Stadium, LA"},
+  { label:"Ξ”ΞµΟ… 15/06", sub:"4 ΞΌΞ±Ο„Ο‚", matches:[
+    {id:13, grp:"H", time:"19:00", home:t("ESP","Ξ™ΟƒΟ€Ξ±Ξ½Ξ―Ξ±"),       away:t("CPV","Ξ Ο. Ξ‘ΞΊΟΟ‰Ο„Ξ®ΟΞΉΞΏ"),  venue:"Mercedes-Benz, Atlanta"},
+    {id:14, grp:"G", time:"22:00", home:t("BEL","Ξ’Ξ­Ξ»Ξ³ΞΉΞΏ"),        away:t("EGY","Ξ‘Ξ―Ξ³Ο…Ο€Ο„ΞΏΟ‚"),       venue:"Lumen Field, Seattle"},
+    {id:15, grp:"H", time:"01:00β¦",home:t("SAU","Ξ£. Ξ‘ΟΞ±Ξ²Ξ―Ξ±"),    away:t("URU","ΞΟ…ΟΞΏΟ…Ξ³ΞΏΟ…Ξ¬Ξ·"),     venue:"Hard Rock Stadium, Miami"},
+    {id:16, grp:"G", time:"04:00β¦",home:t("IRN","Ξ™ΟΞ¬Ξ½"),          away:t("NZL","Ξ. Ξ–Ξ·Ξ»Ξ±Ξ½Ξ΄Ξ―Ξ±"),    venue:"SoFi Stadium, LA"},
   ]},
-  { label:"Τρί 16/06", sub:"3 ματς", matches:[
-    {id:17, grp:"I", time:"22:00", home:t("FRA","Γαλλία"),        away:t("SEN","Σενεγάλη"),       venue:"MetLife Stadium, NJ"},
-    {id:18, grp:"I", time:"01:00✦",home:t("IRQ","Ιράκ"),          away:t("NOR","Νορβηγία"),       venue:"Gillette Stadium, Boston"},
-    {id:19, grp:"J", time:"04:00✦",home:t("ARG","Αργεντινή"),     away:t("ALG","Αλγερία"),        venue:"Arrowhead Stadium, KC"},
+  { label:"Ξ¤ΟΞ― 16/06", sub:"3 ΞΌΞ±Ο„Ο‚", matches:[
+    {id:17, grp:"I", time:"22:00", home:t("FRA","Ξ“Ξ±Ξ»Ξ»Ξ―Ξ±"),        away:t("SEN","Ξ£ΞµΞ½ΞµΞ³Ξ¬Ξ»Ξ·"),       venue:"MetLife Stadium, NJ"},
+    {id:18, grp:"I", time:"01:00β¦",home:t("IRQ","Ξ™ΟΞ¬ΞΊ"),          away:t("NOR","ΞΞΏΟΞ²Ξ·Ξ³Ξ―Ξ±"),       venue:"Gillette Stadium, Boston"},
+    {id:19, grp:"J", time:"04:00β¦",home:t("ARG","Ξ‘ΟΞ³ΞµΞ½Ο„ΞΉΞ½Ξ®"),     away:t("ALG","Ξ‘Ξ»Ξ³ΞµΟΞ―Ξ±"),        venue:"Arrowhead Stadium, KC"},
   ]},
-  { label:"Τετ 17/06", sub:"5 ματς", matches:[
-    {id:20, grp:"J", time:"07:00✦",home:t("AUT","Αυστρία"),       away:t("JOR","Ιορδανία"),       venue:"Levi's Stadium, SF"},
-    {id:21, grp:"K", time:"20:00", home:t("POR","Πορτογαλία"),    away:t("COD","ΛΔ Κονγκό"),      venue:"NRG Stadium, Houston"},
-    {id:22, grp:"L", time:"23:00", home:t("ENG","Αγγλία"),        away:t("CRO","Κροατία"),        venue:"AT&T Stadium, Dallas"},
-    {id:23, grp:"L", time:"02:00✦",home:t("GHA","Γκάνα"),         away:t("PAN","Παναμάς"),        venue:"BMO Field, Τορόντο"},
-    {id:24, grp:"K", time:"05:00✦",home:t("UZB","Ουζμπεκιστάν"), away:t("COL","Κολομβία"),       venue:"Azteca, Πόλη Μεξικού"},
+  { label:"Ξ¤ΞµΟ„ 17/06", sub:"5 ΞΌΞ±Ο„Ο‚", matches:[
+    {id:20, grp:"J", time:"07:00β¦",home:t("AUT","Ξ‘Ο…ΟƒΟ„ΟΞ―Ξ±"),       away:t("JOR","Ξ™ΞΏΟΞ΄Ξ±Ξ½Ξ―Ξ±"),       venue:"Levi's Stadium, SF"},
+    {id:21, grp:"K", time:"20:00", home:t("POR","Ξ ΞΏΟΟ„ΞΏΞ³Ξ±Ξ»Ξ―Ξ±"),    away:t("COD","Ξ›Ξ” ΞΞΏΞ½Ξ³ΞΊΟ"),      venue:"NRG Stadium, Houston"},
+    {id:22, grp:"L", time:"23:00", home:t("ENG","Ξ‘Ξ³Ξ³Ξ»Ξ―Ξ±"),        away:t("CRO","ΞΟΞΏΞ±Ο„Ξ―Ξ±"),        venue:"AT&T Stadium, Dallas"},
+    {id:23, grp:"L", time:"02:00β¦",home:t("GHA","Ξ“ΞΊΞ¬Ξ½Ξ±"),         away:t("PAN","Ξ Ξ±Ξ½Ξ±ΞΌΞ¬Ο‚"),        venue:"BMO Field, Ξ¤ΞΏΟΟΞ½Ο„ΞΏ"},
+    {id:24, grp:"K", time:"05:00β¦",home:t("UZB","ΞΟ…Ξ¶ΞΌΟ€ΞµΞΊΞΉΟƒΟ„Ξ¬Ξ½"), away:t("COL","ΞΞΏΞ»ΞΏΞΌΞ²Ξ―Ξ±"),       venue:"Azteca, Ξ ΟΞ»Ξ· ΞΞµΞΎΞΉΞΊΞΏΟ"},
   ]},
-  { label:"Πέμ 18/06", sub:"4 ματς", matches:[
-    {id:25, grp:"A", time:"19:00", home:t("CZE","Τσεχία"),        away:t("ZAF","Ν. Αφρική"),      venue:"Mercedes-Benz, Atlanta"},
-    {id:26, grp:"B", time:"22:00", home:t("SUI","Ελβετία"),       away:t("BIH","Βοσνία-Ερζ."),   venue:"SoFi Stadium, LA"},
-    {id:27, grp:"B", time:"01:00✦",home:t("CAN","Καναδάς"),       away:t("QAT","Κατάρ"),          venue:"BC Place, Βανκούβερ"},
-    {id:28, grp:"A", time:"04:00✦",home:t("MEX","Μεξικό"),        away:t("KOR","Ν. Κορέα"),       venue:"Akron, Γουαδαλαχάρα"},
+  { label:"Ξ Ξ­ΞΌ 18/06", sub:"4 ΞΌΞ±Ο„Ο‚", matches:[
+    {id:25, grp:"A", time:"19:00", home:t("CZE","Ξ¤ΟƒΞµΟ‡Ξ―Ξ±"),        away:t("ZAF","Ξ. Ξ‘Ο†ΟΞΉΞΊΞ®"),      venue:"Mercedes-Benz, Atlanta"},
+    {id:26, grp:"B", time:"22:00", home:t("SUI","Ξ•Ξ»Ξ²ΞµΟ„Ξ―Ξ±"),       away:t("BIH","Ξ’ΞΏΟƒΞ½Ξ―Ξ±-Ξ•ΟΞ¶."),   venue:"SoFi Stadium, LA"},
+    {id:27, grp:"B", time:"01:00β¦",home:t("CAN","ΞΞ±Ξ½Ξ±Ξ΄Ξ¬Ο‚"),       away:t("QAT","ΞΞ±Ο„Ξ¬Ο"),          venue:"BC Place, Ξ’Ξ±Ξ½ΞΊΞΏΟΞ²ΞµΟ"},
+    {id:28, grp:"A", time:"04:00β¦",home:t("MEX","ΞΞµΞΎΞΉΞΊΟ"),        away:t("KOR","Ξ. ΞΞΏΟΞ­Ξ±"),       venue:"Akron, Ξ“ΞΏΟ…Ξ±Ξ΄Ξ±Ξ»Ξ±Ο‡Ξ¬ΟΞ±"},
   ]},
-  { label:"Παρ 19/06", sub:"4 ματς", matches:[
-    {id:29, grp:"D", time:"22:00", home:t("USA","ΗΠΑ"),           away:t("AUS","Αυστραλία"),      venue:"Lumen Field, Seattle"},
-    {id:30, grp:"C", time:"01:00✦",home:t("SCO","Σκωτία"),        away:t("MAR","Μαρόκο"),         venue:"Gillette Stadium, Boston"},
-    {id:31, grp:"C", time:"03:30✦",home:t("BRA","Βραζιλία"),      away:t("HAI","Αϊτή"),           venue:"Lincoln Financial, Philly"},
-    {id:32, grp:"D", time:"06:00✦",home:t("TUR","Τουρκία"),       away:t("PAR","Παραγουάη"),      venue:"Levi's Stadium, SF"},
+  { label:"Ξ Ξ±Ο 19/06", sub:"4 ΞΌΞ±Ο„Ο‚", matches:[
+    {id:29, grp:"D", time:"22:00", home:t("USA","Ξ—Ξ Ξ‘"),           away:t("AUS","Ξ‘Ο…ΟƒΟ„ΟΞ±Ξ»Ξ―Ξ±"),      venue:"Lumen Field, Seattle"},
+    {id:30, grp:"C", time:"01:00β¦",home:t("SCO","Ξ£ΞΊΟ‰Ο„Ξ―Ξ±"),        away:t("MAR","ΞΞ±ΟΟΞΊΞΏ"),         venue:"Gillette Stadium, Boston"},
+    {id:31, grp:"C", time:"03:30β¦",home:t("BRA","Ξ’ΟΞ±Ξ¶ΞΉΞ»Ξ―Ξ±"),      away:t("HAI","Ξ‘ΟΟ„Ξ®"),           venue:"Lincoln Financial, Philly"},
+    {id:32, grp:"D", time:"06:00β¦",home:t("TUR","Ξ¤ΞΏΟ…ΟΞΊΞ―Ξ±"),       away:t("PAR","Ξ Ξ±ΟΞ±Ξ³ΞΏΟ…Ξ¬Ξ·"),      venue:"Levi's Stadium, SF"},
   ]},
-  { label:"Σάβ 20/06", sub:"4 ματς", matches:[
-    {id:33, grp:"F", time:"20:00", home:t("NED","Ολλανδία"),      away:t("SWE","Σουηδία"),        venue:"NRG Stadium, Houston"},
-    {id:34, grp:"E", time:"23:00", home:t("GER","Γερμανία"),      away:t("CIV","Ακτή Ελεφ."),     venue:"BMO Field, Τορόντο"},
-    {id:35, grp:"E", time:"03:00✦",home:t("ECU","Εκουαδόρ"),      away:t("CUW","Κουρασάο"),       venue:"Arrowhead Stadium, KC"},
-    {id:36, grp:"F", time:"07:00✦",home:t("TUN","Τυνησία"),       away:t("JPN","Ιαπωνία"),        venue:"Estadio BBVA, Μοντερέι"},
+  { label:"Ξ£Ξ¬Ξ² 20/06", sub:"4 ΞΌΞ±Ο„Ο‚", matches:[
+    {id:33, grp:"F", time:"20:00", home:t("NED","ΞΞ»Ξ»Ξ±Ξ½Ξ΄Ξ―Ξ±"),      away:t("SWE","Ξ£ΞΏΟ…Ξ·Ξ΄Ξ―Ξ±"),        venue:"NRG Stadium, Houston"},
+    {id:34, grp:"E", time:"23:00", home:t("GER","Ξ“ΞµΟΞΌΞ±Ξ½Ξ―Ξ±"),      away:t("CIV","Ξ‘ΞΊΟ„Ξ® Ξ•Ξ»ΞµΟ†."),     venue:"BMO Field, Ξ¤ΞΏΟΟΞ½Ο„ΞΏ"},
+    {id:35, grp:"E", time:"03:00β¦",home:t("ECU","Ξ•ΞΊΞΏΟ…Ξ±Ξ΄ΟΟ"),      away:t("CUW","ΞΞΏΟ…ΟΞ±ΟƒΞ¬ΞΏ"),       venue:"Arrowhead Stadium, KC"},
+    {id:36, grp:"F", time:"07:00β¦",home:t("TUN","Ξ¤Ο…Ξ½Ξ·ΟƒΞ―Ξ±"),       away:t("JPN","Ξ™Ξ±Ο€Ο‰Ξ½Ξ―Ξ±"),        venue:"Estadio BBVA, ΞΞΏΞ½Ο„ΞµΟΞ­ΞΉ"},
   ]},
-  { label:"Κυρ 21/06", sub:"4 ματς", matches:[
-    {id:37, grp:"H", time:"19:00", home:t("ESP","Ισπανία"),       away:t("SAU","Σ. Αραβία"),      venue:"Mercedes-Benz, Atlanta"},
-    {id:38, grp:"G", time:"22:00", home:t("BEL","Βέλγιο"),        away:t("IRN","Ιράν"),           venue:"SoFi Stadium, LA"},
-    {id:39, grp:"H", time:"01:00✦",home:t("URU","Ουρουγουάη"),   away:t("CPV","Πρ. Ακρωτήριο"),  venue:"Hard Rock Stadium, Miami"},
-    {id:40, grp:"G", time:"04:00✦",home:t("NZL","Ν. Ζηλανδία"),  away:t("EGY","Αίγυπτος"),       venue:"BC Place, Βανκούβερ"},
+  { label:"ΞΟ…Ο 21/06", sub:"4 ΞΌΞ±Ο„Ο‚", matches:[
+    {id:37, grp:"H", time:"19:00", home:t("ESP","Ξ™ΟƒΟ€Ξ±Ξ½Ξ―Ξ±"),       away:t("SAU","Ξ£. Ξ‘ΟΞ±Ξ²Ξ―Ξ±"),      venue:"Mercedes-Benz, Atlanta"},
+    {id:38, grp:"G", time:"22:00", home:t("BEL","Ξ’Ξ­Ξ»Ξ³ΞΉΞΏ"),        away:t("IRN","Ξ™ΟΞ¬Ξ½"),           venue:"SoFi Stadium, LA"},
+    {id:39, grp:"H", time:"01:00β¦",home:t("URU","ΞΟ…ΟΞΏΟ…Ξ³ΞΏΟ…Ξ¬Ξ·"),   away:t("CPV","Ξ Ο. Ξ‘ΞΊΟΟ‰Ο„Ξ®ΟΞΉΞΏ"),  venue:"Hard Rock Stadium, Miami"},
+    {id:40, grp:"G", time:"04:00β¦",home:t("NZL","Ξ. Ξ–Ξ·Ξ»Ξ±Ξ½Ξ΄Ξ―Ξ±"),  away:t("EGY","Ξ‘Ξ―Ξ³Ο…Ο€Ο„ΞΏΟ‚"),       venue:"BC Place, Ξ’Ξ±Ξ½ΞΊΞΏΟΞ²ΞµΟ"},
   ]},
-  { label:"Δευ 22/06", sub:"3 ματς", matches:[
-    {id:41, grp:"J", time:"20:00", home:t("ARG","Αργεντινή"),     away:t("AUT","Αυστρία"),        venue:"AT&T Stadium, Dallas"},
-    {id:42, grp:"I", time:"00:00✦",home:t("FRA","Γαλλία"),        away:t("IRQ","Ιράκ"),           venue:"Lincoln Financial, Philly"},
-    {id:43, grp:"I", time:"03:00✦",home:t("NOR","Νορβηγία"),      away:t("SEN","Σενεγάλη"),       venue:"MetLife Stadium, NJ"},
+  { label:"Ξ”ΞµΟ… 22/06", sub:"3 ΞΌΞ±Ο„Ο‚", matches:[
+    {id:41, grp:"J", time:"20:00", home:t("ARG","Ξ‘ΟΞ³ΞµΞ½Ο„ΞΉΞ½Ξ®"),     away:t("AUT","Ξ‘Ο…ΟƒΟ„ΟΞ―Ξ±"),        venue:"AT&T Stadium, Dallas"},
+    {id:42, grp:"I", time:"00:00β¦",home:t("FRA","Ξ“Ξ±Ξ»Ξ»Ξ―Ξ±"),        away:t("IRQ","Ξ™ΟΞ¬ΞΊ"),           venue:"Lincoln Financial, Philly"},
+    {id:43, grp:"I", time:"03:00β¦",home:t("NOR","ΞΞΏΟΞ²Ξ·Ξ³Ξ―Ξ±"),      away:t("SEN","Ξ£ΞµΞ½ΞµΞ³Ξ¬Ξ»Ξ·"),       venue:"MetLife Stadium, NJ"},
   ]},
-  { label:"Τρί 23/06", sub:"5 ματς", matches:[
-    {id:44, grp:"J", time:"06:00✦",home:t("JOR","Ιορδανία"),      away:t("ALG","Αλγερία"),        venue:"Levi's Stadium, SF"},
-    {id:45, grp:"K", time:"20:00", home:t("POR","Πορτογαλία"),    away:t("UZB","Ουζμπεκιστάν"),   venue:"NRG Stadium, Houston"},
-    {id:46, grp:"L", time:"23:00", home:t("ENG","Αγγλία"),        away:t("GHA","Γκάνα"),          venue:"Gillette Stadium, Boston"},
-    {id:47, grp:"L", time:"02:00✦",home:t("PAN","Παναμάς"),       away:t("CRO","Κροατία"),        venue:"BMO Field, Τορόντο"},
-    {id:48, grp:"K", time:"05:00✦",home:t("COL","Κολομβία"),      away:t("COD","ΛΔ Κονγκό"),      venue:"Akron, Γουαδαλαχάρα"},
+  { label:"Ξ¤ΟΞ― 23/06", sub:"5 ΞΌΞ±Ο„Ο‚", matches:[
+    {id:44, grp:"J", time:"06:00β¦",home:t("JOR","Ξ™ΞΏΟΞ΄Ξ±Ξ½Ξ―Ξ±"),      away:t("ALG","Ξ‘Ξ»Ξ³ΞµΟΞ―Ξ±"),        venue:"Levi's Stadium, SF"},
+    {id:45, grp:"K", time:"20:00", home:t("POR","Ξ ΞΏΟΟ„ΞΏΞ³Ξ±Ξ»Ξ―Ξ±"),    away:t("UZB","ΞΟ…Ξ¶ΞΌΟ€ΞµΞΊΞΉΟƒΟ„Ξ¬Ξ½"),   venue:"NRG Stadium, Houston"},
+    {id:46, grp:"L", time:"23:00", home:t("ENG","Ξ‘Ξ³Ξ³Ξ»Ξ―Ξ±"),        away:t("GHA","Ξ“ΞΊΞ¬Ξ½Ξ±"),          venue:"Gillette Stadium, Boston"},
+    {id:47, grp:"L", time:"02:00β¦",home:t("PAN","Ξ Ξ±Ξ½Ξ±ΞΌΞ¬Ο‚"),       away:t("CRO","ΞΟΞΏΞ±Ο„Ξ―Ξ±"),        venue:"BMO Field, Ξ¤ΞΏΟΟΞ½Ο„ΞΏ"},
+    {id:48, grp:"K", time:"05:00β¦",home:t("COL","ΞΞΏΞ»ΞΏΞΌΞ²Ξ―Ξ±"),      away:t("COD","Ξ›Ξ” ΞΞΏΞ½Ξ³ΞΊΟ"),      venue:"Akron, Ξ“ΞΏΟ…Ξ±Ξ΄Ξ±Ξ»Ξ±Ο‡Ξ¬ΟΞ±"},
   ]},
-  { label:"Τετ 24/06", sub:"4 ματς", matches:[
-    {id:49, grp:"B", time:"22:00", home:t("SUI","Ελβετία"),       away:t("CAN","Καναδάς"),        venue:"BC Place, Βανκούβερ"},
-    {id:50, grp:"B", time:"22:00", home:t("BIH","Βοσνία-Ερζ."),   away:t("QAT","Κατάρ"),          venue:"Lumen Field, Seattle"},
-    {id:51, grp:"C", time:"01:00✦",home:t("SCO","Σκωτία"),        away:t("BRA","Βραζιλία"),       venue:"Hard Rock Stadium, Miami"},
-    {id:52, grp:"C", time:"01:00✦",home:t("MAR","Μαρόκο"),        away:t("HAI","Αϊτή"),           venue:"Mercedes-Benz, Atlanta"},
+  { label:"Ξ¤ΞµΟ„ 24/06", sub:"4 ΞΌΞ±Ο„Ο‚", matches:[
+    {id:49, grp:"B", time:"22:00", home:t("SUI","Ξ•Ξ»Ξ²ΞµΟ„Ξ―Ξ±"),       away:t("CAN","ΞΞ±Ξ½Ξ±Ξ΄Ξ¬Ο‚"),        venue:"BC Place, Ξ’Ξ±Ξ½ΞΊΞΏΟΞ²ΞµΟ"},
+    {id:50, grp:"B", time:"22:00", home:t("BIH","Ξ’ΞΏΟƒΞ½Ξ―Ξ±-Ξ•ΟΞ¶."),   away:t("QAT","ΞΞ±Ο„Ξ¬Ο"),          venue:"Lumen Field, Seattle"},
+    {id:51, grp:"C", time:"01:00β¦",home:t("SCO","Ξ£ΞΊΟ‰Ο„Ξ―Ξ±"),        away:t("BRA","Ξ’ΟΞ±Ξ¶ΞΉΞ»Ξ―Ξ±"),       venue:"Hard Rock Stadium, Miami"},
+    {id:52, grp:"C", time:"01:00β¦",home:t("MAR","ΞΞ±ΟΟΞΊΞΏ"),        away:t("HAI","Ξ‘ΟΟ„Ξ®"),           venue:"Mercedes-Benz, Atlanta"},
   ]},
-  { label:"Πέμ 25/06", sub:"6 ματς", matches:[
-    {id:53, grp:"A", time:"04:00✦",home:t("CZE","Τσεχία"),        away:t("MEX","Μεξικό"),         venue:"Azteca, Πόλη Μεξικού"},
-    {id:54, grp:"A", time:"04:00✦",home:t("ZAF","Ν. Αφρική"),     away:t("KOR","Ν. Κορέα"),       venue:"Estadio BBVA, Μοντερέι"},
-    {id:55, grp:"E", time:"23:00", home:t("CUW","Κουρασάο"),      away:t("CIV","Ακτή Ελεφ."),     venue:"Lincoln Financial, Philly"},
-    {id:56, grp:"E", time:"23:00", home:t("ECU","Εκουαδόρ"),      away:t("GER","Γερμανία"),       venue:"MetLife Stadium, NJ"},
-    {id:57, grp:"F", time:"02:00✦",home:t("JPN","Ιαπωνία"),       away:t("SWE","Σουηδία"),        venue:"AT&T Stadium, Dallas"},
-    {id:58, grp:"F", time:"02:00✦",home:t("TUN","Τυνησία"),       away:t("NED","Ολλανδία"),       venue:"Arrowhead Stadium, KC"},
+  { label:"Ξ Ξ­ΞΌ 25/06", sub:"6 ΞΌΞ±Ο„Ο‚", matches:[
+    {id:53, grp:"A", time:"04:00β¦",home:t("CZE","Ξ¤ΟƒΞµΟ‡Ξ―Ξ±"),        away:t("MEX","ΞΞµΞΎΞΉΞΊΟ"),         venue:"Azteca, Ξ ΟΞ»Ξ· ΞΞµΞΎΞΉΞΊΞΏΟ"},
+    {id:54, grp:"A", time:"04:00β¦",home:t("ZAF","Ξ. Ξ‘Ο†ΟΞΉΞΊΞ®"),     away:t("KOR","Ξ. ΞΞΏΟΞ­Ξ±"),       venue:"Estadio BBVA, ΞΞΏΞ½Ο„ΞµΟΞ­ΞΉ"},
+    {id:55, grp:"E", time:"23:00", home:t("CUW","ΞΞΏΟ…ΟΞ±ΟƒΞ¬ΞΏ"),      away:t("CIV","Ξ‘ΞΊΟ„Ξ® Ξ•Ξ»ΞµΟ†."),     venue:"Lincoln Financial, Philly"},
+    {id:56, grp:"E", time:"23:00", home:t("ECU","Ξ•ΞΊΞΏΟ…Ξ±Ξ΄ΟΟ"),      away:t("GER","Ξ“ΞµΟΞΌΞ±Ξ½Ξ―Ξ±"),       venue:"MetLife Stadium, NJ"},
+    {id:57, grp:"F", time:"02:00β¦",home:t("JPN","Ξ™Ξ±Ο€Ο‰Ξ½Ξ―Ξ±"),       away:t("SWE","Ξ£ΞΏΟ…Ξ·Ξ΄Ξ―Ξ±"),        venue:"AT&T Stadium, Dallas"},
+    {id:58, grp:"F", time:"02:00β¦",home:t("TUN","Ξ¤Ο…Ξ½Ξ·ΟƒΞ―Ξ±"),       away:t("NED","ΞΞ»Ξ»Ξ±Ξ½Ξ΄Ξ―Ξ±"),       venue:"Arrowhead Stadium, KC"},
   ]},
-  { label:"Παρ 26/06", sub:"6 ματς", matches:[
-    {id:59, grp:"D", time:"05:00✦",home:t("TUR","Τουρκία"),       away:t("USA","ΗΠΑ"),            venue:"SoFi Stadium, LA"},
-    {id:60, grp:"D", time:"05:00✦",home:t("PAR","Παραγουάη"),     away:t("AUS","Αυστραλία"),      venue:"Levi's Stadium, SF"},
-    {id:61, grp:"I", time:"22:00", home:t("NOR","Νορβηγία"),      away:t("FRA","Γαλλία"),         venue:"Gillette Stadium, Boston"},
-    {id:62, grp:"I", time:"22:00", home:t("SEN","Σενεγάλη"),      away:t("IRQ","Ιράκ"),           venue:"BMO Field, Τορόντο"},
-    {id:63, grp:"H", time:"03:00✦",home:t("CPV","Πρ. Ακρωτήριο"),away:t("SAU","Σ. Αραβία"),      venue:"NRG Stadium, Houston"},
-    {id:64, grp:"H", time:"03:00✦",home:t("URU","Ουρουγουάη"),   away:t("ESP","Ισπανία"),        venue:"Akron, Γουαδαλαχάρα"},
+  { label:"Ξ Ξ±Ο 26/06", sub:"6 ΞΌΞ±Ο„Ο‚", matches:[
+    {id:59, grp:"D", time:"05:00β¦",home:t("TUR","Ξ¤ΞΏΟ…ΟΞΊΞ―Ξ±"),       away:t("USA","Ξ—Ξ Ξ‘"),            venue:"SoFi Stadium, LA"},
+    {id:60, grp:"D", time:"05:00β¦",home:t("PAR","Ξ Ξ±ΟΞ±Ξ³ΞΏΟ…Ξ¬Ξ·"),     away:t("AUS","Ξ‘Ο…ΟƒΟ„ΟΞ±Ξ»Ξ―Ξ±"),      venue:"Levi's Stadium, SF"},
+    {id:61, grp:"I", time:"22:00", home:t("NOR","ΞΞΏΟΞ²Ξ·Ξ³Ξ―Ξ±"),      away:t("FRA","Ξ“Ξ±Ξ»Ξ»Ξ―Ξ±"),         venue:"Gillette Stadium, Boston"},
+    {id:62, grp:"I", time:"22:00", home:t("SEN","Ξ£ΞµΞ½ΞµΞ³Ξ¬Ξ»Ξ·"),      away:t("IRQ","Ξ™ΟΞ¬ΞΊ"),           venue:"BMO Field, Ξ¤ΞΏΟΟΞ½Ο„ΞΏ"},
+    {id:63, grp:"H", time:"03:00β¦",home:t("CPV","Ξ Ο. Ξ‘ΞΊΟΟ‰Ο„Ξ®ΟΞΉΞΏ"),away:t("SAU","Ξ£. Ξ‘ΟΞ±Ξ²Ξ―Ξ±"),      venue:"NRG Stadium, Houston"},
+    {id:64, grp:"H", time:"03:00β¦",home:t("URU","ΞΟ…ΟΞΏΟ…Ξ³ΞΏΟ…Ξ¬Ξ·"),   away:t("ESP","Ξ™ΟƒΟ€Ξ±Ξ½Ξ―Ξ±"),        venue:"Akron, Ξ“ΞΏΟ…Ξ±Ξ΄Ξ±Ξ»Ξ±Ο‡Ξ¬ΟΞ±"},
   ]},
-  { label:"Σάβ 27/06", sub:"6 ματς", matches:[
-    {id:65, grp:"G", time:"06:00✦",home:t("EGY","Αίγυπτος"),     away:t("IRN","Ιράν"),           venue:"Lumen Field, Seattle"},
-    {id:66, grp:"G", time:"06:00✦",home:t("NZL","Ν. Ζηλανδία"),  away:t("BEL","Βέλγιο"),         venue:"BC Place, Βανκούβερ"},
-    {id:67, grp:"L", time:"00:00", home:t("PAN","Παναμάς"),       away:t("ENG","Αγγλία"),         venue:"MetLife Stadium, NJ"},
-    {id:68, grp:"L", time:"00:00", home:t("CRO","Κροατία"),       away:t("GHA","Γκάνα"),          venue:"Lincoln Financial, Philly"},
-    {id:69, grp:"K", time:"02:30", home:t("COL","Κολομβία"),      away:t("POR","Πορτογαλία"),     venue:"Hard Rock Stadium, Miami"},
-    {id:70, grp:"K", time:"02:30", home:t("COD","ΛΔ Κονγκό"),    away:t("UZB","Ουζμπεκιστάν"),   venue:"Mercedes-Benz, Atlanta"},
+  { label:"Ξ£Ξ¬Ξ² 27/06", sub:"6 ΞΌΞ±Ο„Ο‚", matches:[
+    {id:65, grp:"G", time:"06:00β¦",home:t("EGY","Ξ‘Ξ―Ξ³Ο…Ο€Ο„ΞΏΟ‚"),     away:t("IRN","Ξ™ΟΞ¬Ξ½"),           venue:"Lumen Field, Seattle"},
+    {id:66, grp:"G", time:"06:00β¦",home:t("NZL","Ξ. Ξ–Ξ·Ξ»Ξ±Ξ½Ξ΄Ξ―Ξ±"),  away:t("BEL","Ξ’Ξ­Ξ»Ξ³ΞΉΞΏ"),         venue:"BC Place, Ξ’Ξ±Ξ½ΞΊΞΏΟΞ²ΞµΟ"},
+    {id:67, grp:"L", time:"00:00", home:t("PAN","Ξ Ξ±Ξ½Ξ±ΞΌΞ¬Ο‚"),       away:t("ENG","Ξ‘Ξ³Ξ³Ξ»Ξ―Ξ±"),         venue:"MetLife Stadium, NJ"},
+    {id:68, grp:"L", time:"00:00", home:t("CRO","ΞΟΞΏΞ±Ο„Ξ―Ξ±"),       away:t("GHA","Ξ“ΞΊΞ¬Ξ½Ξ±"),          venue:"Lincoln Financial, Philly"},
+    {id:69, grp:"K", time:"02:30", home:t("COL","ΞΞΏΞ»ΞΏΞΌΞ²Ξ―Ξ±"),      away:t("POR","Ξ ΞΏΟΟ„ΞΏΞ³Ξ±Ξ»Ξ―Ξ±"),     venue:"Hard Rock Stadium, Miami"},
+    {id:70, grp:"K", time:"02:30", home:t("COD","Ξ›Ξ” ΞΞΏΞ½Ξ³ΞΊΟ"),    away:t("UZB","ΞΟ…Ξ¶ΞΌΟ€ΞµΞΊΞΉΟƒΟ„Ξ¬Ξ½"),   venue:"Mercedes-Benz, Atlanta"},
   ]},
-  { label:"Κυρ 28/06", sub:"3 ματς", matches:[
-    {id:71, grp:"J", time:"05:00✦",home:t("ALG","Αλγερία"),       away:t("AUT","Αυστρία"),        venue:"Arrowhead Stadium, KC"},
-    {id:72, grp:"J", time:"05:00✦",home:t("JOR","Ιορδανία"),      away:t("ARG","Αργεντινή"),      venue:"AT&T Stadium, Dallas"},
-    {id:73, grp:"Β'Φ",time:"22:00",home:{code:"",name:"2η Ομ. A"},away:{code:"",name:"2η Ομ. B"},  venue:"SoFi Stadium, LA"},
+  { label:"ΞΟ…Ο 28/06", sub:"3 ΞΌΞ±Ο„Ο‚", matches:[
+    {id:71, grp:"J", time:"05:00β¦",home:t("ALG","Ξ‘Ξ»Ξ³ΞµΟΞ―Ξ±"),       away:t("AUT","Ξ‘Ο…ΟƒΟ„ΟΞ―Ξ±"),        venue:"Arrowhead Stadium, KC"},
+    {id:72, grp:"J", time:"05:00β¦",home:t("JOR","Ξ™ΞΏΟΞ΄Ξ±Ξ½Ξ―Ξ±"),      away:t("ARG","Ξ‘ΟΞ³ΞµΞ½Ο„ΞΉΞ½Ξ®"),      venue:"AT&T Stadium, Dallas"},
+    {id:73, grp:"Ξ’'Ξ¦",time:"22:00",home:{code:"",name:"2Ξ· ΞΞΌ. A"},away:{code:"",name:"2Ξ· ΞΞΌ. B"},  venue:"SoFi Stadium, LA"},
   ]},
-  { label:"Δευ–Τετ 29/6–1/7", sub:"Β' Φάση", matches:[
-    {id:74, grp:"Β'Φ",time:"TBD",home:{code:"",name:"Νικ. Ομ. C"},away:{code:"",name:"2η Ομ. F"}, venue:"NRG Stadium, Houston"},
-    {id:75, grp:"Β'Φ",time:"TBD",home:{code:"",name:"Νικ. Ομ. E"},away:{code:"",name:"Καλ. 3η"},  venue:"Gillette Stadium, Boston"},
-    {id:76, grp:"Β'Φ",time:"TBD",home:{code:"",name:"Νικ. Ομ. F"},away:{code:"",name:"2η Ομ. C"}, venue:"BBVA, Μοντερέι"},
-    {id:77, grp:"Β'Φ",time:"TBD",home:{code:"",name:"Νικ. Ομ. I"},away:{code:"",name:"Καλ. 3η"},  venue:"MetLife Stadium, NJ"},
-    {id:78, grp:"Β'Φ",time:"TBD",home:{code:"",name:"2η Ομ. E"}, away:{code:"",name:"2η Ομ. I"},  venue:"AT&T Stadium, Dallas"},
-    {id:79, grp:"Β'Φ",time:"TBD",home:{code:"",name:"Νικ. Ομ. A"},away:{code:"",name:"Καλ. 3η"},  venue:"Azteca, Πόλη Μεξικού"},
-    {id:80, grp:"Β'Φ",time:"TBD",home:{code:"",name:"Νικ. Ομ. L"},away:{code:"",name:"Καλ. 3η"},  venue:"Mercedes-Benz, Atlanta"},
-    {id:81, grp:"Β'Φ",time:"TBD",home:{code:"",name:"Νικ. Ομ. B"},away:{code:"",name:"2η Ομ. G"}, venue:"Lumen Field, Seattle"},
-    {id:82, grp:"Β'Φ",time:"TBD",home:{code:"",name:"Νικ. Ομ. G"},away:{code:"",name:"2η Ομ. B"}, venue:"Levi's Stadium, SF"},
-    {id:83, grp:"Β'Φ",time:"TBD",home:{code:"",name:"Νικ. Ομ. D"},away:{code:"",name:"2η Ομ. J"}, venue:"Hard Rock Stadium, Miami"},
-    {id:84, grp:"Β'Φ",time:"TBD",home:{code:"",name:"Νικ. Ομ. J"},away:{code:"",name:"2η Ομ. D"}, venue:"BMO Field, Τορόντο"},
-    {id:85, grp:"Β'Φ",time:"TBD",home:{code:"",name:"Νικ. Ομ. H"},away:{code:"",name:"2η Ομ. K"}, venue:"Arrowhead Stadium, KC"},
-    {id:86, grp:"Β'Φ",time:"TBD",home:{code:"",name:"Νικ. Ομ. K"},away:{code:"",name:"2η Ομ. H"}, venue:"BC Place, Βανκούβερ"},
+  { label:"Ξ”ΞµΟ…β€“Ξ¤ΞµΟ„ 29/6β€“1/7", sub:"Ξ’' Ξ¦Ξ¬ΟƒΞ·", matches:[
+    {id:74, grp:"Ξ’'Ξ¦",time:"TBD",home:{code:"",name:"ΞΞΉΞΊ. ΞΞΌ. C"},away:{code:"",name:"2Ξ· ΞΞΌ. F"}, venue:"NRG Stadium, Houston"},
+    {id:75, grp:"Ξ’'Ξ¦",time:"TBD",home:{code:"",name:"ΞΞΉΞΊ. ΞΞΌ. E"},away:{code:"",name:"ΞΞ±Ξ». 3Ξ·"},  venue:"Gillette Stadium, Boston"},
+    {id:76, grp:"Ξ’'Ξ¦",time:"TBD",home:{code:"",name:"ΞΞΉΞΊ. ΞΞΌ. F"},away:{code:"",name:"2Ξ· ΞΞΌ. C"}, venue:"BBVA, ΞΞΏΞ½Ο„ΞµΟΞ­ΞΉ"},
+    {id:77, grp:"Ξ’'Ξ¦",time:"TBD",home:{code:"",name:"ΞΞΉΞΊ. ΞΞΌ. I"},away:{code:"",name:"ΞΞ±Ξ». 3Ξ·"},  venue:"MetLife Stadium, NJ"},
+    {id:78, grp:"Ξ’'Ξ¦",time:"TBD",home:{code:"",name:"2Ξ· ΞΞΌ. E"}, away:{code:"",name:"2Ξ· ΞΞΌ. I"},  venue:"AT&T Stadium, Dallas"},
+    {id:79, grp:"Ξ’'Ξ¦",time:"TBD",home:{code:"",name:"ΞΞΉΞΊ. ΞΞΌ. A"},away:{code:"",name:"ΞΞ±Ξ». 3Ξ·"},  venue:"Azteca, Ξ ΟΞ»Ξ· ΞΞµΞΎΞΉΞΊΞΏΟ"},
+    {id:80, grp:"Ξ’'Ξ¦",time:"TBD",home:{code:"",name:"ΞΞΉΞΊ. ΞΞΌ. L"},away:{code:"",name:"ΞΞ±Ξ». 3Ξ·"},  venue:"Mercedes-Benz, Atlanta"},
+    {id:81, grp:"Ξ’'Ξ¦",time:"TBD",home:{code:"",name:"ΞΞΉΞΊ. ΞΞΌ. B"},away:{code:"",name:"2Ξ· ΞΞΌ. G"}, venue:"Lumen Field, Seattle"},
+    {id:82, grp:"Ξ’'Ξ¦",time:"TBD",home:{code:"",name:"ΞΞΉΞΊ. ΞΞΌ. G"},away:{code:"",name:"2Ξ· ΞΞΌ. B"}, venue:"Levi's Stadium, SF"},
+    {id:83, grp:"Ξ’'Ξ¦",time:"TBD",home:{code:"",name:"ΞΞΉΞΊ. ΞΞΌ. D"},away:{code:"",name:"2Ξ· ΞΞΌ. J"}, venue:"Hard Rock Stadium, Miami"},
+    {id:84, grp:"Ξ’'Ξ¦",time:"TBD",home:{code:"",name:"ΞΞΉΞΊ. ΞΞΌ. J"},away:{code:"",name:"2Ξ· ΞΞΌ. D"}, venue:"BMO Field, Ξ¤ΞΏΟΟΞ½Ο„ΞΏ"},
+    {id:85, grp:"Ξ’'Ξ¦",time:"TBD",home:{code:"",name:"ΞΞΉΞΊ. ΞΞΌ. H"},away:{code:"",name:"2Ξ· ΞΞΌ. K"}, venue:"Arrowhead Stadium, KC"},
+    {id:86, grp:"Ξ’'Ξ¦",time:"TBD",home:{code:"",name:"ΞΞΉΞΊ. ΞΞΌ. K"},away:{code:"",name:"2Ξ· ΞΞΌ. H"}, venue:"BC Place, Ξ’Ξ±Ξ½ΞΊΞΏΟΞ²ΞµΟ"},
   ]},
-  { label:"4–8/07", sub:"Γύρος 16", matches:[
-    {id:87,grp:"Γ16",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
-    {id:88,grp:"Γ16",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
-    {id:89,grp:"Γ16",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
-    {id:90,grp:"Γ16",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
-    {id:91,grp:"Γ16",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
-    {id:92,grp:"Γ16",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
-    {id:93,grp:"Γ16",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
-    {id:94,grp:"Γ16",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
+  { label:"4β€“8/07", sub:"Ξ“ΟΟΞΏΟ‚ 16", matches:[
+    {id:87,grp:"Ξ“16",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
+    {id:88,grp:"Ξ“16",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
+    {id:89,grp:"Ξ“16",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
+    {id:90,grp:"Ξ“16",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
+    {id:91,grp:"Ξ“16",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
+    {id:92,grp:"Ξ“16",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
+    {id:93,grp:"Ξ“16",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
+    {id:94,grp:"Ξ“16",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
   ]},
-  { label:"10–13/07", sub:"Προημιτελικά", matches:[
-    {id:95,grp:"ΠΗΦ",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
-    {id:96,grp:"ΠΗΦ",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
-    {id:97,grp:"ΠΗΦ",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
-    {id:98,grp:"ΠΗΦ",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
+  { label:"10β€“13/07", sub:"Ξ ΟΞΏΞ·ΞΌΞΉΟ„ΞµΞ»ΞΉΞΊΞ¬", matches:[
+    {id:95,grp:"Ξ Ξ—Ξ¦",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
+    {id:96,grp:"Ξ Ξ—Ξ¦",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
+    {id:97,grp:"Ξ Ξ—Ξ¦",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
+    {id:98,grp:"Ξ Ξ—Ξ¦",time:"TBD",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"TBD"},
   ]},
-  { label:"14–15/07", sub:"Ημιτελικά", matches:[
-    {id:99, grp:"ΗΦ",time:"22:00",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"MetLife Stadium, NJ"},
-    {id:100,grp:"ΗΦ",time:"22:00",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"Rose Bowl, LA"},
+  { label:"14β€“15/07", sub:"Ξ—ΞΌΞΉΟ„ΞµΞ»ΞΉΞΊΞ¬", matches:[
+    {id:99, grp:"Ξ—Ξ¦",time:"22:00",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"MetLife Stadium, NJ"},
+    {id:100,grp:"Ξ—Ξ¦",time:"22:00",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"Rose Bowl, LA"},
   ]},
-  { label:"19/07", sub:"🏆 Τελικός", matches:[
-    {id:101,grp:"ΤΛ",time:"22:00",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"MetLife Stadium, NJ"},
+  { label:"19/07", sub:"π† Ξ¤ΞµΞ»ΞΉΞΊΟΟ‚", matches:[
+    {id:101,grp:"Ξ¤Ξ›",time:"22:00",home:{code:"",name:"TBD"},away:{code:"",name:"TBD"},venue:"MetLife Stadium, NJ"},
   ]},
 ];
 
@@ -212,16 +212,16 @@ const ALL_MATCHES = DAYS.flatMap(d => d.matches);
 
 
 
-/* ══ HELPERS ══ */
+/* β•β• HELPERS β•β• */
 function canSeeOther(viewer,other,matchId,ready){return ready?.[viewer]?.[matchId]&&ready?.[other]?.[matchId];}
 
-/* ══════════════════════════════════════════════════
+/* β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•
    LOGIN
-══════════════════════════════════════════════════ */
+β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β• */
 function LoginScreen({onLogin}){
   const [pin,setPin]=useState(""); const [error,setError]=useState(false); const [shake,setShake]=useState(false);
   function press(k){
-    if(k==="⌫"){setPin(p=>p.slice(0,-1));setError(false);return;}
+    if(k==="β«"){setPin(p=>p.slice(0,-1));setError(false);return;}
     if(pin.length>=4)return;
     const next=pin+k; setPin(next);
     if(next.length===4){
@@ -233,49 +233,46 @@ function LoginScreen({onLogin}){
   return(
     <div style={{minHeight:"100vh",background:"#080f18",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"'DM Sans','Segoe UI',sans-serif",padding:24}}>
       <div style={{marginBottom:44,textAlign:"center"}}>
-        <div style={{fontSize:56,marginBottom:10}}>⚽</div>
-        <div style={{fontSize:28,fontWeight:900,color:"#fff",letterSpacing:-1}}>ΜΟΥΝΤΙΑΛ 2026</div>
-        <div style={{fontSize:11,color:"#3d5166",letterSpacing:4,marginTop:8,textTransform:"uppercase"}}>Φίλοι Στοίχημα</div>
+        <div style={{fontSize:56,marginBottom:10}}>β½</div>
+        <div style={{fontSize:28,fontWeight:900,color:"#fff",letterSpacing:-1}}>ΞΞΞ¥ΞΞ¤Ξ™Ξ‘Ξ› 2026</div>
+        <div style={{fontSize:11,color:"#3d5166",letterSpacing:4,marginTop:8,textTransform:"uppercase"}}>Ξ¦Ξ―Ξ»ΞΏΞΉ Ξ£Ο„ΞΏΞ―Ο‡Ξ·ΞΌΞ±</div>
       </div>
       <div style={{display:"flex",gap:14,marginBottom:36,animation:shake?"shake 0.5s":"none"}}>
         {[0,1,2,3].map(i=>(
           <div key={i} style={{width:16,height:16,borderRadius:"50%",background:i<pin.length?(error?"#ef4444":"#22c55e"):"#1a2535",border:`2px solid ${i<pin.length?(error?"#ef4444":"#22c55e"):"#253545"}`,transition:"all 0.15s",boxShadow:i<pin.length&&!error?"0 0 8px #22c55e60":"none"}}/>
         ))}
       </div>
-      {error&&<div style={{color:"#ef4444",fontSize:13,marginBottom:16,fontWeight:600}}>Λάθος PIN</div>}
+      {error&&<div style={{color:"#ef4444",fontSize:13,marginBottom:16,fontWeight:600}}>Ξ›Ξ¬ΞΈΞΏΟ‚ PIN</div>}
       <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,width:240}}>
-        {["1","2","3","4","5","6","7","8","9","","0","⌫"].map((k,i)=>(
+        {["1","2","3","4","5","6","7","8","9","","0","β«"].map((k,i)=>(
           k===""?<div key={i}/>:
-          <button key={i} onClick={()=>press(k)} style={{height:64,borderRadius:14,background:k==="⌫"?"#1a2535":"#101c28",border:"1px solid #1a2535",color:k==="⌫"?"#ef4444":"#e8eaed",fontSize:k==="⌫"?22:24,fontWeight:700,cursor:"pointer"}}>{k}</button>
+          <button key={i} onClick={()=>press(k)} style={{height:64,borderRadius:14,background:k==="β«"?"#1a2535":"#101c28",border:"1px solid #1a2535",color:k==="β«"?"#ef4444":"#e8eaed",fontSize:k==="β«"?22:24,fontWeight:700,cursor:"pointer"}}>{k}</button>
         ))}
-      </div>
-      <div style={{marginTop:32,color:"#253545",fontSize:11,textAlign:"center",lineHeight:2}}>
-        Teo: 1111 · Νίκος: 2222 · Τάσος: 3333
       </div>
       <style>{`@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}`}</style>
     </div>
   );
 }
 
-/* ══════════════════════════════════════════════════
+/* β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•
    READY MODAL
-══════════════════════════════════════════════════ */
+β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β• */
 function ReadyModal({match,betCount,onConfirm,onCancel}){
   return(
     <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.85)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000,backdropFilter:"blur(6px)",padding:20}}>
       <div style={{background:"#111d2b",borderRadius:22,padding:28,width:"100%",maxWidth:400,border:"1px solid #1e2f40",textAlign:"center",animation:"fadeIn 0.2s ease"}}>
-        <div style={{fontSize:44,marginBottom:12}}>🔒</div>
-        <div style={{fontSize:17,fontWeight:800,color:"#fff",marginBottom:10}}>Δήλωση Ετοιμότητας</div>
+        <div style={{fontSize:44,marginBottom:12}}>π”’</div>
+        <div style={{fontSize:17,fontWeight:800,color:"#fff",marginBottom:10}}>Ξ”Ξ®Ξ»Ο‰ΟƒΞ· Ξ•Ο„ΞΏΞΉΞΌΟΟ„Ξ·Ο„Ξ±Ο‚</div>
         <div style={{fontSize:13,color:"#5a7080",marginBottom:4,lineHeight:1.5}}>
           {FL(match.home.code)} {match.home.name} vs {FL(match.away.code)} {match.away.name}
         </div>
         {betCount===0
-          ?<div style={{fontSize:13,color:"#F59E0B",background:"#F59E0B10",borderRadius:10,padding:"10px 14px",margin:"14px 0",lineHeight:1.6}}>Δεν έχεις κάνει καμία επιλογή.<br/>Θέλεις να δηλώσεις ετοιμότητα χωρίς επιλογές;</div>
-          :<div style={{fontSize:13,color:"#94a3b8",background:"#1a2c3e",borderRadius:10,padding:"10px 14px",margin:"14px 0",lineHeight:1.6}}>Έχεις <strong style={{color:"#fff"}}>{betCount}</strong> επιλογ{betCount===1?"ή":"ές"}.<br/>Μετά τη δήλωση <strong style={{color:"#ef4444"}}>δεν μπορείς να αλλάξεις</strong> τίποτα.<br/>Θα φανούν μόλις δηλώσουν κι οι άλλοι.</div>
+          ?<div style={{fontSize:13,color:"#F59E0B",background:"#F59E0B10",borderRadius:10,padding:"10px 14px",margin:"14px 0",lineHeight:1.6}}>Ξ”ΞµΞ½ Ξ­Ο‡ΞµΞΉΟ‚ ΞΊΞ¬Ξ½ΞµΞΉ ΞΊΞ±ΞΌΞ―Ξ± ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ®.<br/>ΞΞ­Ξ»ΞµΞΉΟ‚ Ξ½Ξ± Ξ΄Ξ·Ξ»ΟΟƒΞµΞΉΟ‚ ΞµΟ„ΞΏΞΉΞΌΟΟ„Ξ·Ο„Ξ± Ο‡Ο‰ΟΞ―Ο‚ ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ­Ο‚;</div>
+          :<div style={{fontSize:13,color:"#94a3b8",background:"#1a2c3e",borderRadius:10,padding:"10px 14px",margin:"14px 0",lineHeight:1.6}}>ΞΟ‡ΞµΞΉΟ‚ <strong style={{color:"#fff"}}>{betCount}</strong> ΞµΟ€ΞΉΞ»ΞΏΞ³{betCount===1?"Ξ®":"Ξ­Ο‚"}.<br/>ΞΞµΟ„Ξ¬ Ο„Ξ· Ξ΄Ξ®Ξ»Ο‰ΟƒΞ· <strong style={{color:"#ef4444"}}>Ξ΄ΞµΞ½ ΞΌΟ€ΞΏΟΞµΞ―Ο‚ Ξ½Ξ± Ξ±Ξ»Ξ»Ξ¬ΞΎΞµΞΉΟ‚</strong> Ο„Ξ―Ο€ΞΏΟ„Ξ±.<br/>ΞΞ± Ο†Ξ±Ξ½ΞΏΟΞ½ ΞΌΟΞ»ΞΉΟ‚ Ξ΄Ξ·Ξ»ΟΟƒΞΏΟ…Ξ½ ΞΊΞΉ ΞΏΞΉ Ξ¬Ξ»Ξ»ΞΏΞΉ.</div>
         }
         <div style={{display:"flex",gap:10,marginTop:4}}>
-          <button onClick={onCancel} style={{flex:1,padding:13,borderRadius:12,background:"#1a2535",border:"none",color:"#8a9db0",fontSize:14,fontWeight:600,cursor:"pointer"}}>Πίσω</button>
-          <button onClick={onConfirm} style={{flex:2,padding:13,borderRadius:12,background:"#16a34a",border:"none",color:"#fff",fontSize:14,fontWeight:700,cursor:"pointer"}}>✓ Είμαι Έτοιμος</button>
+          <button onClick={onCancel} style={{flex:1,padding:13,borderRadius:12,background:"#1a2535",border:"none",color:"#8a9db0",fontSize:14,fontWeight:600,cursor:"pointer"}}>Ξ Ξ―ΟƒΟ‰</button>
+          <button onClick={onConfirm} style={{flex:2,padding:13,borderRadius:12,background:"#16a34a",border:"none",color:"#fff",fontSize:14,fontWeight:700,cursor:"pointer"}}>β“ Ξ•Ξ―ΞΌΞ±ΞΉ ΞΟ„ΞΏΞΉΞΌΞΏΟ‚</button>
         </div>
       </div>
       <style>{`@keyframes fadeIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}`}</style>
@@ -283,9 +280,9 @@ function ReadyModal({match,betCount,onConfirm,onCancel}){
   );
 }
 
-/* ══════════════════════════════════════════════════
-   SCORE MODAL — χειροκίνητη καταχώρηση σκορ
-══════════════════════════════════════════════════ */
+/* β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•
+   SCORE MODAL β€” Ο‡ΞµΞΉΟΞΏΞΊΞ―Ξ½Ξ·Ο„Ξ· ΞΊΞ±Ο„Ξ±Ο‡ΟΟΞ·ΟƒΞ· ΟƒΞΊΞΏΟ
+β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β• */
 function ScoreModal({match,existing,onSave,onDelete,onCancel}){
   const [h,setH]=useState(existing && existing.home !== undefined ? String(existing.home) : "");
   const [a,setA]=useState(existing && existing.away !== undefined ? String(existing.away) : "");
@@ -293,7 +290,7 @@ function ScoreModal({match,existing,onSave,onDelete,onCancel}){
   return(
     <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.9)",display:"flex",alignItems:"flex-end",justifyContent:"center",zIndex:1000,backdropFilter:"blur(6px)"}}>
       <div style={{background:"#111d2b",borderRadius:"22px 22px 0 0",padding:24,width:"100%",maxWidth:480,border:"1px solid #1e2f40",animation:"slideUp 0.22s ease"}}>
-        <div style={{fontSize:12,color:"#5a7080",marginBottom:12,textTransform:"uppercase",letterSpacing:1}}>Καταχώρηση Σκορ</div>
+        <div style={{fontSize:12,color:"#5a7080",marginBottom:12,textTransform:"uppercase",letterSpacing:1}}>ΞΞ±Ο„Ξ±Ο‡ΟΟΞ·ΟƒΞ· Ξ£ΞΊΞΏΟ</div>
         <div style={{fontSize:13,color:"#8a9db0",marginBottom:16,textAlign:"center"}}>{FL(match.home.code)} {match.home.name} vs {FL(match.away.code)} {match.away.name}</div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 24px 1fr",alignItems:"center",gap:8,marginBottom:20}}>
           <div style={{textAlign:"center"}}>
@@ -301,7 +298,7 @@ function ScoreModal({match,existing,onSave,onDelete,onCancel}){
             <input type="number" min="0" max="20" value={h} onChange={e=>setH(e.target.value)}
               style={{width:"100%",padding:"12px 0",background:"#0c1520",border:"2px solid #2d4155",borderRadius:12,color:"#fff",fontSize:32,fontWeight:900,textAlign:"center",outline:"none",boxSizing:"border-box",fontFamily:"monospace"}}/>
           </div>
-          <span style={{textAlign:"center",fontSize:16,color:"#2d4155",fontWeight:700}}>–</span>
+          <span style={{textAlign:"center",fontSize:16,color:"#2d4155",fontWeight:700}}>β€“</span>
           <div style={{textAlign:"center"}}>
             <div style={{fontSize:11,color:"#5a7080",marginBottom:6}}>{match.away.name}</div>
             <input type="number" min="0" max="20" value={a} onChange={e=>setA(e.target.value)}
@@ -309,11 +306,11 @@ function ScoreModal({match,existing,onSave,onDelete,onCancel}){
           </div>
         </div>
         <div style={{display:"flex",gap:8,marginBottom:0}}>
-          <button onClick={onCancel} style={{flex:1,padding:13,borderRadius:12,background:"#1a2535",border:"none",color:"#8a9db0",fontSize:14,fontWeight:600,cursor:"pointer"}}>Άκυρο</button>
-          {existing&&<button onClick={onDelete} style={{padding:"13px 14px",borderRadius:12,background:"#ef444418",border:"1px solid #ef444430",color:"#ef4444",fontSize:13,fontWeight:600,cursor:"pointer"}}>Διαγραφή</button>}
+          <button onClick={onCancel} style={{flex:1,padding:13,borderRadius:12,background:"#1a2535",border:"none",color:"#8a9db0",fontSize:14,fontWeight:600,cursor:"pointer"}}>Ξ†ΞΊΟ…ΟΞΏ</button>
+          {existing&&<button onClick={onDelete} style={{padding:"13px 14px",borderRadius:12,background:"#ef444418",border:"1px solid #ef444430",color:"#ef4444",fontSize:13,fontWeight:600,cursor:"pointer"}}>Ξ”ΞΉΞ±Ξ³ΟΞ±Ο†Ξ®</button>}
           <button onClick={()=>valid&&onSave(parseInt(h),parseInt(a))} disabled={!valid}
             style={{flex:2,padding:13,borderRadius:12,background:valid?"#2563eb":"#1a2535",border:"none",color:valid?"#fff":"#3d5566",fontSize:14,fontWeight:700,cursor:valid?"pointer":"default"}}>
-            ✓ Αποθήκευση
+            β“ Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·
           </button>
         </div>
       </div>
@@ -322,9 +319,9 @@ function ScoreModal({match,existing,onSave,onDelete,onCancel}){
   );
 }
 
-/* ══════════════════════════════════════════════════
+/* β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•
    MARKET ROW
-══════════════════════════════════════════════════ */
+β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β• */
 function MarketRow({market,matchId,userBets,onSelect}){
   const [open,setOpen]=useState(false);
   const sel=userBets?.[matchId]?.[market.id];
@@ -334,7 +331,7 @@ function MarketRow({market,matchId,userBets,onSelect}){
         <span>{market.label}</span>
         <div style={{display:"flex",alignItems:"center",gap:6,flexShrink:0,marginLeft:8}}>
           {sel&&<span style={{fontSize:11,background:"#16a34a20",color:"#22c55e",padding:"2px 8px",borderRadius:20,fontWeight:700,whiteSpace:"nowrap"}}>{sel.optLabel}</span>}
-          <span style={{color:"#2d4155",fontSize:15,transform:open?"rotate(180deg)":"rotate(0)",transition:"0.2s"}}>⌄</span>
+          <span style={{color:"#2d4155",fontSize:15,transform:open?"rotate(180deg)":"rotate(0)",transition:"0.2s"}}>β„</span>
         </div>
       </button>
       {open&&(
@@ -352,9 +349,9 @@ function MarketRow({market,matchId,userBets,onSelect}){
   );
 }
 
-/* ══════════════════════════════════════════════════
+/* β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•
    MATCH CARD
-══════════════════════════════════════════════════ */
+β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β• */
 function MatchCard({match,userBets,allBets,ready,scores,results,matchLocked,currentUser,isAdmin,onSelect,onReady,onUnlock,onScoreEdit,onResultEdit,onMatchLockToggle}){
   const [expanded,setExpanded]=useState(false);
   const markets=buildMarkets(match.home,match.away);
@@ -391,20 +388,20 @@ function MatchCard({match,userBets,allBets,ready,scores,results,matchLocked,curr
       {/* HEADER */}
       <button onClick={()=>!isLocked&&setExpanded(e=>!e)} style={{width:"100%",background:"transparent",border:"none",cursor:isLocked?"default":"pointer",padding:"13px 16px 10px",textAlign:"left"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:5}}>
-          <span style={{fontSize:11,color:"#3d5566",fontFamily:"monospace",fontWeight:600}}>{match.time} <span style={{color:"#1e2f40",fontSize:9}}>EEST</span> · Ομ.{match.grp}</span>
+          <span style={{fontSize:11,color:"#3d5566",fontFamily:"monospace",fontWeight:600}}>{match.time} <span style={{color:"#1e2f40",fontSize:9}}>EEST</span> Β· ΞΞΌ.{match.grp}</span>
           <div style={{display:"flex",alignItems:"center",gap:6}}>
             <span style={{fontSize:9,color:"#1e2f40",background:"#0a1520",padding:"2px 7px",borderRadius:8,maxWidth:110,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{match.venue}</span>
-            {/* Admin lock button — top right */}
+            {/* Admin lock button β€” top right */}
             {isAdmin&&(
               <button
                 onClick={e=>{e.stopPropagation();onMatchLockToggle(match.id);}}
-                title={adminLocked?"Ξεκλείδωμα αποτελέσματος":"Κλείδωμα αποτελέσματος"}
+                title={adminLocked?"ΞΞµΞΊΞ»ΞµΞ―Ξ΄Ο‰ΞΌΞ± Ξ±Ο€ΞΏΟ„ΞµΞ»Ξ­ΟƒΞΌΞ±Ο„ΞΏΟ‚":"ΞΞ»ΞµΞ―Ξ΄Ο‰ΞΌΞ± Ξ±Ο€ΞΏΟ„ΞµΞ»Ξ­ΟƒΞΌΞ±Ο„ΞΏΟ‚"}
                 style={{background:adminLocked?"#16a34a22":"#1a2535",border:`1px solid ${adminLocked?"#22c55e40":"#253545"}`,borderRadius:7,padding:"3px 7px",cursor:"pointer",fontSize:14,color:adminLocked?"#22c55e":"#4a5568",display:"flex",alignItems:"center"}}>
                 {adminLocked?"\uD83D\uDD12":"\uD83D\uDD13"}
               </button>
             )}
             {!isAdmin&&adminLocked&&(
-              <span style={{fontSize:13,color:"#22c55e",opacity:0.7}} title="Αποτέλεσμα κλειδωμένο">{"\uD83D\uDD12"}</span>
+              <span style={{fontSize:13,color:"#22c55e",opacity:0.7}} title="Ξ‘Ο€ΞΏΟ„Ξ­Ξ»ΞµΟƒΞΌΞ± ΞΊΞ»ΞµΞΉΞ΄Ο‰ΞΌΞ­Ξ½ΞΏ">{"\uD83D\uDD12"}</span>
             )}
           </div>
         </div>
@@ -416,7 +413,7 @@ function MatchCard({match,userBets,allBets,ready,scores,results,matchLocked,curr
           <div style={{textAlign:"center",minWidth:52}}>
             {score
               ?<div style={{background:"#0a1520",border:"1px solid #2563eb40",borderRadius:10,padding:"4px 10px"}}>
-                 <span style={{fontSize:20,fontWeight:900,color:"#fff",fontFamily:"monospace"}}>{score.home} – {score.away}</span>
+                 <span style={{fontSize:20,fontWeight:900,color:"#fff",fontFamily:"monospace"}}>{score.home} β€“ {score.away}</span>
                </div>
               :<span style={{fontSize:9,color:"#2d4155",fontWeight:700}}>VS</span>
             }
@@ -428,26 +425,26 @@ function MatchCard({match,userBets,allBets,ready,scores,results,matchLocked,curr
         </div>
         <div style={{display:"flex",gap:5,flexWrap:"wrap",alignItems:"center"}}>
           {isLocked
-            ?<span style={{fontSize:10,padding:"2px 9px",borderRadius:20,background:allDone?"#16a34a18":"#92400e18",color:allDone?"#22c55e":"#F59E0B",fontWeight:700}}>{allDone?"✓ Όλοι Έτοιμοι":"🔒 Εσύ Έτοιμος"}</span>
-            :<span style={{fontSize:10,padding:"2px 9px",borderRadius:20,background:"#141f2b",color:"#3d5566"}}>+ Επιλογές {expanded?"▲":"▼"}</span>
+            ?<span style={{fontSize:10,padding:"2px 9px",borderRadius:20,background:allDone?"#16a34a18":"#92400e18",color:allDone?"#22c55e":"#F59E0B",fontWeight:700}}>{allDone?"β“ ΞΞ»ΞΏΞΉ ΞΟ„ΞΏΞΉΞΌΞΏΞΉ":"π”’ Ξ•ΟƒΟ ΞΟ„ΞΏΞΉΞΌΞΏΟ‚"}</span>
+            :<span style={{fontSize:10,padding:"2px 9px",borderRadius:20,background:"#141f2b",color:"#3d5566"}}>+ Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ­Ο‚ {expanded?"β–²":"β–Ό"}</span>
           }
           {ALL_USERS.filter(u=>u!==currentUser&&ready?.[u]?.[match.id]).map(u=>(
-            <span key={u} style={{fontSize:10,padding:"2px 9px",borderRadius:20,background:USERS_CONFIG[u].light,color:USERS_CONFIG[u].color,fontWeight:600}}>{u} ✓</span>
+            <span key={u} style={{fontSize:10,padding:"2px 9px",borderRadius:20,background:USERS_CONFIG[u].light,color:USERS_CONFIG[u].color,fontWeight:600}}>{u} β“</span>
           ))}
         </div>
       </button>
 
-      {/* ΣΚΟΡ ΚΟΥΜΠΙ — μόνο για Admin */}
+      {/* Ξ£ΞΞΞ΅ ΞΞΞ¥ΞΞ Ξ™ β€” ΞΌΟΞ½ΞΏ Ξ³ΞΉΞ± Admin */}
       {isAdmin&&(
         <div style={{padding:"6px 16px 8px",display:"flex",gap:8,borderTop:"1px solid #101820"}}>
           <button onClick={()=>!adminLocked&&onScoreEdit(match)}
             style={{flex:1,padding:"6px 0",background:score?"#2563eb18":"#141f2b",border:`1px solid ${score?"#2563eb40":"#1e2f40"}`,borderRadius:9,color:score?(adminLocked?"#4a5568":"#60a5fa"):"#3d5566",fontSize:11,fontWeight:600,cursor:adminLocked?"default":"pointer",opacity:adminLocked?0.5:1}}>
-            {score?`${score.home} – ${score.away}${adminLocked?"":" ✎"}`:"\u2295 Σκορ"}
+            {score?`${score.home} β€“ ${score.away}${adminLocked?"":" β"}`:"\u2295 Ξ£ΞΊΞΏΟ"}
           </button>
           {canUnlock&&!adminLocked&&(
             <button onClick={()=>onUnlock(match.id)}
               style={{padding:"6px 12px",background:"#92400e18",border:"1px solid #92400e30",borderRadius:9,color:"#F59E0B",fontSize:11,fontWeight:600,cursor:"pointer"}}>
-              ✎ Αλλαγή
+              β Ξ‘Ξ»Ξ»Ξ±Ξ³Ξ®
             </button>
           )}
         </div>
@@ -455,11 +452,11 @@ function MatchCard({match,userBets,allBets,ready,scores,results,matchLocked,curr
       {/* Score display when locked and not admin */}
       {!isAdmin&&score&&adminLocked&&(
         <div style={{padding:"4px 16px 6px",borderTop:"1px solid #101820"}}>
-          <span style={{fontSize:10,color:"#22c55e",fontWeight:600}}>✓ Τελικό: {score.home}–{score.away}</span>
+          <span style={{fontSize:10,color:"#22c55e",fontWeight:600}}>β“ Ξ¤ΞµΞ»ΞΉΞΊΟ: {score.home}β€“{score.away}</span>
         </div>
       )}
 
-      {/* ΟΙ ΔΙΚΕΣ ΜΟΥ ΕΠΙΛΟΓΕΣ — όλοι οι χρήστες */}
+      {/* ΞΞ™ Ξ”Ξ™ΞΞ•Ξ£ ΞΞΞ¥ Ξ•Ξ Ξ™Ξ›ΞΞ“Ξ•Ξ£ β€” ΟΞ»ΞΏΞΉ ΞΏΞΉ Ο‡ΟΞ®ΟƒΟ„ΞµΟ‚ */}
       {myBets.length>0&&(
         <div style={{borderTop:"1px solid #101820",background:"rgba(0,0,0,0.15)"}}>
           <div style={{padding:"6px 16px 2px",display:"flex",alignItems:"center",gap:8}}>
@@ -480,7 +477,7 @@ function MatchCard({match,userBets,allBets,ready,scores,results,matchLocked,curr
                   <button
                     onClick={()=>!adminLocked&&onResultEdit(match.id,mktId,sel)}
                     style={{background:cur===true?"#16a34a22":cur===false?"#ef444422":"transparent",border:`1px solid ${cur===true?"#22c55e40":cur===false?"#ef444440":"#253545"}`,borderRadius:6,color:cur===true?"#22c55e":cur===false?"#ef4444":"#4a5568",cursor:adminLocked?"default":"pointer",fontSize:13,padding:"2px 7px",flexShrink:0,opacity:adminLocked?0.4:1}}>
-                    {cur===undefined?"◎":cur===true?"✓":"✗"}
+                    {cur===undefined?"β—":cur===true?"β“":"β—"}
                   </button>
                 )}
               </div>
@@ -490,7 +487,7 @@ function MatchCard({match,userBets,allBets,ready,scores,results,matchLocked,curr
         </div>
       )}
 
-      {/* ADMIN: βλέπει επιλογές άλλων μόνο αν έχουν δηλώσει ετοιμότητα ΚΑΙ ΟΙ ΔΥΟ */}
+      {/* ADMIN: Ξ²Ξ»Ξ­Ο€ΞµΞΉ ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ­Ο‚ Ξ¬Ξ»Ξ»Ο‰Ξ½ ΞΌΟΞ½ΞΏ Ξ±Ξ½ Ξ­Ο‡ΞΏΟ…Ξ½ Ξ΄Ξ·Ξ»ΟΟƒΞµΞΉ ΞµΟ„ΞΏΞΉΞΌΟΟ„Ξ·Ο„Ξ± ΞΞ‘Ξ™ ΞΞ™ Ξ”Ξ¥Ξ */}
       {isAdmin&&ALL_USERS.filter(u=>u!==currentUser).map(u=>{
         const uConf=USERS_CONFIG[u];
         const uBets=Object.entries(allBets?.[u]?.[match.id]||{});
@@ -503,8 +500,8 @@ function MatchCard({match,userBets,allBets,ready,scores,results,matchLocked,curr
             <div style={{padding:"5px 16px 2px",display:"flex",alignItems:"center",gap:8}}>
               <div style={{width:18,height:18,borderRadius:"50%",background:uConf.color,color:"#000",display:"flex",alignItems:"center",justifyContent:"center",fontSize:8,fontWeight:900,flexShrink:0}}>{uConf.avatar}</div>
               <span style={{fontSize:11,fontWeight:700,color:uConf.color}}>{u}</span>
-              {!visible&&<span style={{fontSize:10,color:"#2d4155",marginLeft:"auto"}}>🔒 Δήλωσε κι εσύ για να δεις</span>}
-              {visible&&uBets.length===0&&<span style={{fontSize:10,color:"#2d4155",marginLeft:"auto"}}>Χωρίς επιλογές</span>}
+              {!visible&&<span style={{fontSize:10,color:"#2d4155",marginLeft:"auto"}}>π”’ Ξ”Ξ®Ξ»Ο‰ΟƒΞµ ΞΊΞΉ ΞµΟƒΟ Ξ³ΞΉΞ± Ξ½Ξ± Ξ΄ΞµΞΉΟ‚</span>}
+              {visible&&uBets.length===0&&<span style={{fontSize:10,color:"#2d4155",marginLeft:"auto"}}>Ξ§Ο‰ΟΞ―Ο‚ ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ­Ο‚</span>}
             </div>
             {visible&&uBets.map(([mktId,sel])=>{
               const rc=betResultColor(match.id,mktId,sel);
@@ -519,7 +516,7 @@ function MatchCard({match,userBets,allBets,ready,scores,results,matchLocked,curr
                   <button
                     onClick={()=>!adminLocked&&onResultEdit(match.id,mktId,sel)}
                     style={{background:cur===true?"#16a34a22":cur===false?"#ef444422":"transparent",border:`1px solid ${cur===true?"#22c55e40":cur===false?"#ef444440":"#253545"}`,borderRadius:6,color:cur===true?"#22c55e":cur===false?"#ef4444":"#4a5568",cursor:adminLocked?"default":"pointer",fontSize:13,padding:"2px 7px",flexShrink:0,opacity:adminLocked?0.4:1}}>
-                    {cur===undefined?"◎":cur===true?"✓":"✗"}
+                    {cur===undefined?"β—":cur===true?"β“":"β—"}
                   </button>
                 </div>
               );
@@ -529,7 +526,7 @@ function MatchCard({match,userBets,allBets,ready,scores,results,matchLocked,curr
         );
       })}
 
-      {/* ΕΠΙΛΟΓΕΣ ΑΛΛΩΝ — μόνο για non-admin χρήστες (ο Teo τα βλέπει πάνω) */}
+      {/* Ξ•Ξ Ξ™Ξ›ΞΞ“Ξ•Ξ£ Ξ‘Ξ›Ξ›Ξ©Ξ β€” ΞΌΟΞ½ΞΏ Ξ³ΞΉΞ± non-admin Ο‡ΟΞ®ΟƒΟ„ΞµΟ‚ (ΞΏ Teo Ο„Ξ± Ξ²Ξ»Ξ­Ο€ΞµΞΉ Ο€Ξ¬Ξ½Ο‰) */}
       {!isAdmin&&othersBets.map(({user,visible,bets})=>{
         const uConf=USERS_CONFIG[user];
         return(
@@ -537,8 +534,8 @@ function MatchCard({match,userBets,allBets,ready,scores,results,matchLocked,curr
             <div style={{padding:"6px 16px 2px",display:"flex",alignItems:"center",gap:8}}>
               <div style={{width:20,height:20,borderRadius:"50%",background:uConf.color,color:"#000",display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,fontWeight:900,flexShrink:0}}>{uConf.avatar}</div>
               <span style={{fontSize:11,fontWeight:700,color:uConf.color}}>{user}</span>
-              {!visible&&<span style={{fontSize:10,color:"#2d4155",marginLeft:"auto"}}>🔒 Δήλωσε κι εσύ για να δεις</span>}
-              {visible&&bets.length===0&&<span style={{fontSize:10,color:"#2d4155",marginLeft:"auto"}}>Χωρίς επιλογές</span>}
+              {!visible&&<span style={{fontSize:10,color:"#2d4155",marginLeft:"auto"}}>π”’ Ξ”Ξ®Ξ»Ο‰ΟƒΞµ ΞΊΞΉ ΞµΟƒΟ Ξ³ΞΉΞ± Ξ½Ξ± Ξ΄ΞµΞΉΟ‚</span>}
+              {visible&&bets.length===0&&<span style={{fontSize:10,color:"#2d4155",marginLeft:"auto"}}>Ξ§Ο‰ΟΞ―Ο‚ ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ­Ο‚</span>}
             </div>
             {visible&&bets.map(([mktId,sel])=>{
               const rc=betResultColor(match.id,mktId,sel);
@@ -559,12 +556,12 @@ function MatchCard({match,userBets,allBets,ready,scores,results,matchLocked,curr
       {/* WAITING */}
       {isLocked&&waiting.length>0&&(
         <div style={{borderTop:"1px solid #101820",padding:"7px 16px 9px",display:"flex",gap:5,alignItems:"center"}}>
-          <span style={{fontSize:11,color:"#3d5566"}}>Περιμένει:</span>
+          <span style={{fontSize:11,color:"#3d5566"}}>Ξ ΞµΟΞΉΞΌΞ­Ξ½ΞµΞΉ:</span>
           {waiting.map(u=><span key={u} style={{fontSize:11,color:USERS_CONFIG[u].color,fontWeight:700}}>{u}</span>)}
         </div>
       )}
 
-      {/* ACCORDION ΑΓΟΡΩΝ — όλοι οι χρήστες */}
+      {/* ACCORDION Ξ‘Ξ“ΞΞ΅Ξ©Ξ β€” ΟΞ»ΞΏΞΉ ΞΏΞΉ Ο‡ΟΞ®ΟƒΟ„ΞµΟ‚ */}
       {!isLocked&&expanded&&(
         <div style={{borderTop:"1px solid #1a2d3e"}}>
           {markets.map(m=>(
@@ -573,7 +570,7 @@ function MatchCard({match,userBets,allBets,ready,scores,results,matchLocked,curr
           <div style={{padding:14}}>
             <button onClick={e=>{e.stopPropagation();onReady(match);}}
               style={{width:"100%",padding:12,borderRadius:12,background:"#16a34a",border:"none",color:"#fff",fontSize:14,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
-              🔒 Δήλωση Ετοιμότητας
+              π”’ Ξ”Ξ®Ξ»Ο‰ΟƒΞ· Ξ•Ο„ΞΏΞΉΞΌΟΟ„Ξ·Ο„Ξ±Ο‚
             </button>
           </div>
         </div>
@@ -582,20 +579,20 @@ function MatchCard({match,userBets,allBets,ready,scores,results,matchLocked,curr
   );
 }
 
-/* ══════════════════════════════════════════════════
+/* β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•
    STATS TAB
-══════════════════════════════════════════════════ */
+β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β• */
 function StatsTab({allBets,ready,results}){
   const MKT_DISPLAY=[
-    {id:"1x2",    label:"Τελικό Αποτέλεσμα", icon:"🏆"},
-    {id:"dc",     label:"Διπλή Ευκαιρία",    icon:"🎯"},
-    {id:"ou",     label:"Over/Under Γκολ",    icon:"⚽"},
-    {id:"btts",   label:"GG/NG",              icon:"🥅"},
-    {id:"ht",     label:"1ο Ημίχ. Αποτέλ.",  icon:"⏱"},
-    {id:"htou",   label:"1ο Ημίχ. Over/Under",icon:"📊"},
-    {id:"home_ou",label:"Γκολ Γηπεδούχου",   icon:"🏠"},
-    {id:"away_ou",label:"Γκολ Φιλοξ.",       icon:"✈️"},
-    {id:"ggou",   label:"GG ή Over 2.5",      icon:"💥"},
+    {id:"1x2",    label:"Ξ¤ΞµΞ»ΞΉΞΊΟ Ξ‘Ο€ΞΏΟ„Ξ­Ξ»ΞµΟƒΞΌΞ±", icon:"π†"},
+    {id:"dc",     label:"Ξ”ΞΉΟ€Ξ»Ξ® Ξ•Ο…ΞΊΞ±ΞΉΟΞ―Ξ±",    icon:"π―"},
+    {id:"ou",     label:"Over/Under Ξ“ΞΊΞΏΞ»",    icon:"β½"},
+    {id:"btts",   label:"GG/NG",              icon:"π¥…"},
+    {id:"ht",     label:"1ΞΏ Ξ—ΞΌΞ―Ο‡. Ξ‘Ο€ΞΏΟ„Ξ­Ξ».",  icon:"β±"},
+    {id:"htou",   label:"1ΞΏ Ξ—ΞΌΞ―Ο‡. Over/Under",icon:"π“"},
+    {id:"home_ou",label:"Ξ“ΞΊΞΏΞ» Ξ“Ξ·Ο€ΞµΞ΄ΞΏΟΟ‡ΞΏΟ…",   icon:"π "},
+    {id:"away_ou",label:"Ξ“ΞΊΞΏΞ» Ξ¦ΞΉΞ»ΞΏΞΎ.",       icon:"βοΈ"},
+    {id:"ggou",   label:"GG Ξ® Over 2.5",      icon:"π’¥"},
   ];
 
   function calcStats(user){
@@ -618,15 +615,15 @@ function StatsTab({allBets,ready,results}){
   }
 
   // Overall pct string
-  function pct(w,t){ if(t===0)return"–"; return `${Math.round(w/t*100)}% (${w}/${t})`; }
+  function pct(w,t){ if(t===0)return"β€“"; return `${Math.round(w/t*100)}% (${w}/${t})`; }
 
   return(
     <div style={{padding:"16px 14px 100px"}}>
-      <h2 style={{fontSize:12,color:"#3d5566",letterSpacing:2,textTransform:"uppercase",margin:"0 0 16px",fontWeight:700}}>Στατιστικά Παικτών</h2>
+      <h2 style={{fontSize:12,color:"#3d5566",letterSpacing:2,textTransform:"uppercase",margin:"0 0 16px",fontWeight:700}}>Ξ£Ο„Ξ±Ο„ΞΉΟƒΟ„ΞΉΞΊΞ¬ Ξ Ξ±ΞΉΞΊΟ„ΟΞ½</h2>
 
       {/* Summary comparison row */}
       <div style={{background:"#0d1a26",border:"1px solid #141f2b",borderRadius:14,padding:"14px 16px",marginBottom:20}}>
-        <div style={{fontSize:10,color:"#3d5566",letterSpacing:1,textTransform:"uppercase",marginBottom:12,fontWeight:700}}>Σύγκριση</div>
+        <div style={{fontSize:10,color:"#3d5566",letterSpacing:1,textTransform:"uppercase",marginBottom:12,fontWeight:700}}>Ξ£ΟΞ³ΞΊΟΞΉΟƒΞ·</div>
         <div style={{display:"flex",gap:10}}>
           {ALL_USERS.map(user=>{
             const uc=USERS_CONFIG[user];
@@ -637,8 +634,8 @@ function StatsTab({allBets,ready,results}){
               <div key={user} style={{flex:1,background:uc.light,border:`1px solid ${uc.color}25`,borderRadius:12,padding:"10px 8px",textAlign:"center"}}>
                 <div style={{width:28,height:28,borderRadius:"50%",background:uc.color,color:"#000",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:900,margin:"0 auto 6px"}}>{uc.avatar}</div>
                 <div style={{fontSize:11,fontWeight:700,color:uc.color,marginBottom:4}}>{user}</div>
-                <div style={{fontSize:18,fontWeight:900,color:p!==null?"#fff":"#3d5566"}}>{p!==null?`${p}%`:"–"}</div>
-                <div style={{fontSize:9,color:"#3d5566",marginTop:2}}>{won}/{judged} σωστές</div>
+                <div style={{fontSize:18,fontWeight:900,color:p!==null?"#fff":"#3d5566"}}>{p!==null?`${p}%`:"β€“"}</div>
+                <div style={{fontSize:9,color:"#3d5566",marginTop:2}}>{won}/{judged} ΟƒΟ‰ΟƒΟ„Ξ­Ο‚</div>
               </div>
             );
           })}
@@ -660,20 +657,20 @@ function StatsTab({allBets,ready,results}){
               </div>
               <div style={{textAlign:"right"}}>
                 <div style={{fontSize:20,fontWeight:900,color:judged>0?"#fff":"#3d5566",lineHeight:1}}>
-                  {judged>0?`${Math.round(won/judged*100)}%`:"–"}
+                  {judged>0?`${Math.round(won/judged*100)}%`:"β€“"}
                 </div>
-                <div style={{fontSize:9,color:"#3d5566",marginTop:1}}>συνολικό ποσοστό</div>
+                <div style={{fontSize:9,color:"#3d5566",marginTop:1}}>ΟƒΟ…Ξ½ΞΏΞ»ΞΉΞΊΟ Ο€ΞΏΟƒΞΏΟƒΟ„Ο</div>
               </div>
             </div>
 
             {/* Summary pills */}
             <div style={{display:"flex",flexWrap:"wrap",gap:8,padding:"12px 16px",borderBottom:"1px solid #141f2b"}}>
               {[
-                {label:"Επιλογές",  val:total,   col:"#e8eaed"},
-                {label:"✓ Σωστές",  val:won,     col:"#22c55e"},
-                {label:"✗ Λάθος",   val:lost,    col:"#ef4444"},
-                {label:"⏳ Εκκρεμ.", val:pending, col:"#F59E0B"},
-                {label:"Ματς ✓",    val:readyCount, col:"#8a9db0"},
+                {label:"Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ­Ο‚",  val:total,   col:"#e8eaed"},
+                {label:"β“ Ξ£Ο‰ΟƒΟ„Ξ­Ο‚",  val:won,     col:"#22c55e"},
+                {label:"β— Ξ›Ξ¬ΞΈΞΏΟ‚",   val:lost,    col:"#ef4444"},
+                {label:"β³ Ξ•ΞΊΞΊΟΞµΞΌ.", val:pending, col:"#F59E0B"},
+                {label:"ΞΞ±Ο„Ο‚ β“",    val:readyCount, col:"#8a9db0"},
               ].map(p=>(
                 <div key={p.label} style={{background:"#141f2b",borderRadius:10,padding:"6px 12px",textAlign:"center"}}>
                   <div style={{fontSize:16,fontWeight:800,color:p.col}}>{p.val}</div>
@@ -684,7 +681,7 @@ function StatsTab({allBets,ready,results}){
 
             {/* Per-market breakdown with % (W/T) */}
             <div style={{padding:"10px 16px 14px"}}>
-              <div style={{fontSize:10,color:"#3d5566",letterSpacing:1,textTransform:"uppercase",marginBottom:10,fontWeight:600}}>Ανά Αγορά</div>
+              <div style={{fontSize:10,color:"#3d5566",letterSpacing:1,textTransform:"uppercase",marginBottom:10,fontWeight:600}}>Ξ‘Ξ½Ξ¬ Ξ‘Ξ³ΞΏΟΞ¬</div>
               {MKT_DISPLAY.map(m=>{
                 const ms=mktStats[m.id]||{total:0,won:0};
                 const hasBets=ms.total>0;
@@ -719,7 +716,7 @@ function StatsTab({allBets,ready,results}){
                       <span style={{fontSize:11,fontWeight:700,color:hasBets?uc.color:"#2d4155",minWidth:60,textAlign:"right"}}>
                         {judgedMkt.j>0
                           ? `${barPct}% (${judgedMkt.w}/${judgedMkt.j})`
-                          : ms.total>0 ? `${ms.total} εκκρ.` : "–"
+                          : ms.total>0 ? `${ms.total} ΞµΞΊΞΊΟ.` : "β€“"
                         }
                       </span>
                     </div>
@@ -734,14 +731,14 @@ function StatsTab({allBets,ready,results}){
   );
 }
 
-/* ══════════════════════════════════════════════════
+/* β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•
    BANKROLL TAB
-══════════════════════════════════════════════════ */
+β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β• */
 function BankrollTab({bankroll,isAdmin,onUpdate}){
   const INITIAL=bankroll.initial||300;
   const bets=bankroll.bets||[];
 
-  // Υπολογισμός τρέχοντος κεφαλαίου
+  // Ξ¥Ο€ΞΏΞ»ΞΏΞ³ΞΉΟƒΞΌΟΟ‚ Ο„ΟΞ­Ο‡ΞΏΞ½Ο„ΞΏΟ‚ ΞΊΞµΟ†Ξ±Ξ»Ξ±Ξ―ΞΏΟ…
   function calcCurrent(betList){
     return betList.reduce((cap,b)=>{
       if(b.result==="win") return cap+(b.stake*(b.odds-1));
@@ -753,7 +750,7 @@ function BankrollTab({bankroll,isAdmin,onUpdate}){
   const current=calcCurrent(bets);
   const diff=current-INITIAL;
 
-  // Επόμενο stake = 10% τρέχοντος
+  // Ξ•Ο€ΟΞΌΞµΞ½ΞΏ stake = 10% Ο„ΟΞ­Ο‡ΞΏΞ½Ο„ΞΏΟ‚
   const nextStake=Math.round(current*0.1*100)/100;
 
   // State for new bet form
@@ -784,41 +781,41 @@ function BankrollTab({bankroll,isAdmin,onUpdate}){
       <div style={{background:"#0d1a26",border:"1px solid #141f2b",borderRadius:14,padding:"16px",marginBottom:16}}>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10,marginBottom:4}}>
           <div style={{textAlign:"center"}}>
-            <div style={{fontSize:10,color:"#3d5566",marginBottom:4,textTransform:"uppercase",letterSpacing:1}}>Αρχικό</div>
-            <div style={{fontSize:20,fontWeight:900,color:"#e8eaed"}}>{INITIAL.toFixed(0)}€</div>
+            <div style={{fontSize:10,color:"#3d5566",marginBottom:4,textTransform:"uppercase",letterSpacing:1}}>Ξ‘ΟΟ‡ΞΉΞΊΟ</div>
+            <div style={{fontSize:20,fontWeight:900,color:"#e8eaed"}}>{INITIAL.toFixed(0)}β‚¬</div>
           </div>
           <div style={{textAlign:"center"}}>
-            <div style={{fontSize:10,color:"#3d5566",marginBottom:4,textTransform:"uppercase",letterSpacing:1}}>Τρέχον</div>
-            <div style={{fontSize:20,fontWeight:900,color:"#fff"}}>{current.toFixed(2)}€</div>
+            <div style={{fontSize:10,color:"#3d5566",marginBottom:4,textTransform:"uppercase",letterSpacing:1}}>Ξ¤ΟΞ­Ο‡ΞΏΞ½</div>
+            <div style={{fontSize:20,fontWeight:900,color:"#fff"}}>{current.toFixed(2)}β‚¬</div>
           </div>
           <div style={{textAlign:"center"}}>
-            <div style={{fontSize:10,color:"#3d5566",marginBottom:4,textTransform:"uppercase",letterSpacing:1}}>Διαφορά</div>
+            <div style={{fontSize:10,color:"#3d5566",marginBottom:4,textTransform:"uppercase",letterSpacing:1}}>Ξ”ΞΉΞ±Ο†ΞΏΟΞ¬</div>
             <div style={{fontSize:20,fontWeight:900,color:diff>0?"#22c55e":diff<0?"#ef4444":"#8a9db0"}}>
-              {diff>0?"+":""}{diff.toFixed(2)}€
+              {diff>0?"+":""}{diff.toFixed(2)}β‚¬
             </div>
           </div>
         </div>
         <div style={{marginTop:10,background:"#141f2b",borderRadius:8,padding:"8px 12px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <span style={{fontSize:11,color:"#5a7080"}}>Επόμενο Στοίχημα (10%)</span>
-          <span style={{fontSize:14,fontWeight:800,color:"#F59E0B"}}>{nextStake.toFixed(2)}€</span>
+          <span style={{fontSize:11,color:"#5a7080"}}>Ξ•Ο€ΟΞΌΞµΞ½ΞΏ Ξ£Ο„ΞΏΞ―Ο‡Ξ·ΞΌΞ± (10%)</span>
+          <span style={{fontSize:14,fontWeight:800,color:"#F59E0B"}}>{nextStake.toFixed(2)}β‚¬</span>
         </div>
       </div>
 
-      {/* New bet form — μόνο admin */}
+      {/* New bet form β€” ΞΌΟΞ½ΞΏ admin */}
       {isAdmin&&(
         <div style={{background:"#0d1a26",border:"1px solid #F59E0B30",borderRadius:14,padding:"14px",marginBottom:16}}>
-          <div style={{fontSize:11,color:"#F59E0B",fontWeight:700,marginBottom:10,textTransform:"uppercase",letterSpacing:1}}>+ Νέο Στοίχημα</div>
+          <div style={{fontSize:11,color:"#F59E0B",fontWeight:700,marginBottom:10,textTransform:"uppercase",letterSpacing:1}}>+ ΞΞ­ΞΏ Ξ£Ο„ΞΏΞ―Ο‡Ξ·ΞΌΞ±</div>
           <div style={{display:"flex",gap:8}}>
             <div style={{flex:1}}>
               <input
-                type="number" step="0.01" min="1.01" placeholder="Απόδοση"
+                type="number" step="0.01" min="1.01" placeholder="Ξ‘Ο€ΟΞ΄ΞΏΟƒΞ·"
                 value={newOdds} onChange={e=>setNewOdds(e.target.value)}
                 onKeyDown={e=>e.key==="Enter"&&addBet()}
                 style={{width:"100%",padding:"12px 14px",background:"#0a1520",border:"1px solid #253545",borderRadius:10,color:"#fff",fontSize:20,fontWeight:700,fontFamily:"monospace",outline:"none",boxSizing:"border-box"}}
               />
             </div>
             <div style={{display:"flex",alignItems:"center",background:"#141f2b",borderRadius:10,padding:"0 14px",flexShrink:0}}>
-              <span style={{fontSize:14,color:"#F59E0B",fontWeight:700}}>{nextStake.toFixed(2)}€</span>
+              <span style={{fontSize:14,color:"#F59E0B",fontWeight:700}}>{nextStake.toFixed(2)}β‚¬</span>
             </div>
             <button onClick={addBet}
               style={{padding:"12px 18px",background:"#F59E0B",border:"none",borderRadius:10,color:"#000",fontWeight:900,fontSize:18,cursor:"pointer",flexShrink:0}}>
@@ -830,10 +827,10 @@ function BankrollTab({bankroll,isAdmin,onUpdate}){
 
       {/* Bets list */}
       <div style={{fontSize:11,color:"#3d5566",letterSpacing:1,textTransform:"uppercase",marginBottom:10,fontWeight:700}}>
-        Ιστορικό ({bets.length})
+        Ξ™ΟƒΟ„ΞΏΟΞΉΞΊΟ ({bets.length})
       </div>
       {bets.length===0&&(
-        <div style={{color:"#2d4155",fontSize:13,textAlign:"center",padding:24}}>Κανένα στοίχημα ακόμα</div>
+        <div style={{color:"#2d4155",fontSize:13,textAlign:"center",padding:24}}>ΞΞ±Ξ½Ξ­Ξ½Ξ± ΟƒΟ„ΞΏΞ―Ο‡Ξ·ΞΌΞ± Ξ±ΞΊΟΞΌΞ±</div>
       )}
       {bets.map((b,i)=>{
         const isWin=b.result==="win";
@@ -846,10 +843,10 @@ function BankrollTab({bankroll,isAdmin,onUpdate}){
               <div style={{display:"flex",gap:10,alignItems:"center",flex:1,minWidth:0,flexWrap:"wrap"}}>
                 <span style={{fontSize:11,color:"#3d5566",flexShrink:0}}>{b.ts}</span>
                 <span style={{fontSize:16,color:"#F59E0B",fontWeight:800,fontFamily:"monospace",flexShrink:0}}>@{b.odds}</span>
-                <span style={{fontSize:14,color:"#8a9db0",fontFamily:"monospace",flexShrink:0}}>{b.stake.toFixed(2)}€</span>
+                <span style={{fontSize:14,color:"#8a9db0",fontFamily:"monospace",flexShrink:0}}>{b.stake.toFixed(2)}β‚¬</span>
                 {profit!==null&&(
                   <span style={{fontSize:14,fontWeight:800,color:profit>=0?"#22c55e":"#ef4444",fontFamily:"monospace",flexShrink:0}}>
-                    {profit>=0?"+":""}{profit.toFixed(2)}€
+                    {profit>=0?"+":""}{profit.toFixed(2)}β‚¬
                   </span>
                 )}
               </div>
@@ -858,33 +855,33 @@ function BankrollTab({bankroll,isAdmin,onUpdate}){
                 {isPending&&isAdmin&&(
                   <>
                     <button onClick={()=>setResult(b.id,"win")}
-                      style={{padding:"5px 10px",background:"#16a34a20",border:"1px solid #22c55e40",borderRadius:8,color:"#22c55e",fontSize:12,fontWeight:700,cursor:"pointer"}}>✓</button>
+                      style={{padding:"5px 10px",background:"#16a34a20",border:"1px solid #22c55e40",borderRadius:8,color:"#22c55e",fontSize:12,fontWeight:700,cursor:"pointer"}}>β“</button>
                     <button onClick={()=>setResult(b.id,"loss")}
-                      style={{padding:"5px 10px",background:"#ef444420",border:"1px solid #ef444440",borderRadius:8,color:"#ef4444",fontSize:12,fontWeight:700,cursor:"pointer"}}>✗</button>
+                      style={{padding:"5px 10px",background:"#ef444420",border:"1px solid #ef444440",borderRadius:8,color:"#ef4444",fontSize:12,fontWeight:700,cursor:"pointer"}}>β—</button>
                   </>
                 )}
                 {!isPending&&(
                   <span style={{padding:"4px 12px",background:isWin?"#16a34a20":"#ef444420",border:`1px solid ${isWin?"#22c55e40":"#ef444440"}`,borderRadius:8,color:isWin?"#22c55e":"#ef4444",fontSize:12,fontWeight:700}}>
-                    {isWin?"✓ Κερδίσαμε":"✗ Χάσαμε"}
+                    {isWin?"β“ ΞΞµΟΞ΄Ξ―ΟƒΞ±ΞΌΞµ":"β— Ξ§Ξ¬ΟƒΞ±ΞΌΞµ"}
                   </span>
                 )}
                 {isPending&&(
-                  <span style={{padding:"4px 10px",background:"#F59E0B18",border:"1px solid #F59E0B30",borderRadius:8,color:"#F59E0B",fontSize:11}}>⏳</span>
+                  <span style={{padding:"4px 10px",background:"#F59E0B18",border:"1px solid #F59E0B30",borderRadius:8,color:"#F59E0B",fontSize:11}}>β³</span>
                 )}
                 {isAdmin&&!isPending&&(
                   <button onClick={()=>setResult(b.id,null)}
-                    style={{padding:"4px 8px",background:"transparent",border:"1px solid #253545",borderRadius:8,color:"#4a5568",fontSize:11,cursor:"pointer"}}>↩</button>
+                    style={{padding:"4px 8px",background:"transparent",border:"1px solid #253545",borderRadius:8,color:"#4a5568",fontSize:11,cursor:"pointer"}}>β†©</button>
                 )}
                 {isAdmin&&isPending&&(
                   <button onClick={()=>deleteBet(b.id)}
-                    style={{padding:"4px 8px",background:"transparent",border:"1px solid #253545",borderRadius:8,color:"#4a5568",fontSize:11,cursor:"pointer"}}>✕</button>
+                    style={{padding:"4px 8px",background:"transparent",border:"1px solid #253545",borderRadius:8,color:"#4a5568",fontSize:11,cursor:"pointer"}}>β•</button>
                 )}
               </div>
             </div>
             {/* Capital after this bet */}
             {!isPending&&(
               <div style={{fontSize:10,color:"#3d5566",borderTop:"1px solid #141f2b",paddingTop:6,marginTop:4}}>
-                Κεφάλαιο μετά: <span style={{color:"#8a9db0",fontWeight:700}}>{calcCurrent(bets.slice(i)).toFixed(2)}€</span>
+                ΞΞµΟ†Ξ¬Ξ»Ξ±ΞΉΞΏ ΞΌΞµΟ„Ξ¬: <span style={{color:"#8a9db0",fontWeight:700}}>{calcCurrent(bets.slice(i)).toFixed(2)}β‚¬</span>
               </div>
             )}
           </div>
@@ -916,7 +913,7 @@ function MatchesTab({userBets,allBets,ready,scores,results,matchLocked,currentUs
         })}
       </div>
       <div style={{padding:"12px 12px 100px"}}>
-        <div style={{fontSize:10,color:"#3d5566",marginBottom:10,fontWeight:700,letterSpacing:0.5,textTransform:"uppercase"}}>{day.label} · {day.sub}</div>
+        <div style={{fontSize:10,color:"#3d5566",marginBottom:10,fontWeight:700,letterSpacing:0.5,textTransform:"uppercase"}}>{day.label} Β· {day.sub}</div>
         {day.matches.map(match=>(
           <MatchCard key={match.id} match={match} userBets={userBets} allBets={allBets} ready={ready} scores={scores} results={results} matchLocked={matchLocked} currentUser={currentUser} isAdmin={isAdmin}
             onSelect={(market,option)=>onSelect(market,option,match)}
@@ -932,11 +929,18 @@ function MatchesTab({userBets,allBets,ready,scores,results,matchLocked,currentUs
   );
 }
 
-/* ══════════════════════════════════════════════════
+/* β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•
    MAIN APP
-══════════════════════════════════════════════════ */
+β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β•β• */
 export default function App(){
-  const [currentUser,setCurrentUser]=useState(null);
+  // Auto-login: Ξ΄ΞΉΞ±Ξ²Ξ¬Ξ¶ΞΏΟ…ΞΌΞµ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞΏ Ο‡ΟΞ®ΟƒΟ„Ξ· Ξ±Ο€Ο localStorage
+  const [currentUser,setCurrentUser]=useState(()=>{
+    try {
+      const saved = localStorage.getItem("mundial2026_user");
+      if(saved && USERS_CONFIG[saved]) return saved;
+    } catch(e) {}
+    return null;
+  });
   const [allBets,setAllBets]=useState({});
   const [ready,setReady]=useState({});
   const [scores,setScores]=useState({});
@@ -948,7 +952,18 @@ export default function App(){
   const [scoreEdit,setScoreEdit]=useState(null);
   const [loaded,setLoaded]=useState(false);
 
-  // Real-time Firebase subscription — loads everything once and listens for changes
+  // Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· Ο‡ΟΞ®ΟƒΟ„Ξ· ΟƒΟ„ΞΏ localStorage ΞΊΞ¬ΞΈΞµ Ο†ΞΏΟΞ¬ Ο€ΞΏΟ… Ξ±Ξ»Ξ»Ξ¬Ξ¶ΞµΞΉ
+  function handleLogin(user){
+    try { localStorage.setItem("mundial2026_user", user); } catch(e) {}
+    setCurrentUser(user);
+    setTab("matches");
+  }
+  function handleLogout(){
+    try { localStorage.removeItem("mundial2026_user"); } catch(e) {}
+    setCurrentUser(null);
+  }
+
+  // Real-time Firebase subscription β€” loads everything once and listens for changes
   useEffect(()=>{
     const unsubs = [];
     let loadCount = 0;
@@ -978,7 +993,7 @@ export default function App(){
     await persistMatchLocked(nm);
   }
 
-  // Άμεση επιλογή χωρίς modal αποδόσεων
+  // Ξ†ΞΌΞµΟƒΞ· ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ® Ο‡Ο‰ΟΞ―Ο‚ modal Ξ±Ο€ΞΏΞ΄ΟΟƒΞµΟ‰Ξ½
   async function handleSelect(market,option,match){
     if(ready?.[currentUser]?.[match.id])return;
     const existing=allBets?.[currentUser]?.[match.id]?.[market.id];
@@ -999,21 +1014,21 @@ export default function App(){
     await persistReady(nr);
   }
 
-  // Ξεκλείδωμα ματς (μόνο αν δεν έχουν αποκαλυφθεί)
+  // ΞΞµΞΊΞ»ΞµΞ―Ξ΄Ο‰ΞΌΞ± ΞΌΞ±Ο„Ο‚ (ΞΌΟΞ½ΞΏ Ξ±Ξ½ Ξ΄ΞµΞ½ Ξ­Ο‡ΞΏΟ…Ξ½ Ξ±Ο€ΞΏΞΊΞ±Ξ»Ο…Ο†ΞΈΞµΞ―)
   async function handleUnlock(matchId){
     const nr={...ready,[currentUser]:{...(ready[currentUser]||{})}};
     delete nr[currentUser][matchId];
     await persistReady(nr);
   }
 
-  // Αποθήκευση σκορ
+  // Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· ΟƒΞΊΞΏΟ
   async function handleScoreSave(match,homeGoals,awayGoals){
     const ns={...scores,[match.id]:{home:homeGoals,away:awayGoals}};
     setScoreEdit(null);
     await persistScores(ns);
   }
 
-  // Διαγραφή σκορ
+  // Ξ”ΞΉΞ±Ξ³ΟΞ±Ο†Ξ® ΟƒΞΊΞΏΟ
   async function handleScoreDelete(match){
     const ns={...scores};
     delete ns[match.id];
@@ -1021,7 +1036,7 @@ export default function App(){
     await persistScores(ns);
   }
 
-  // Toggle αποτέλεσμα πρόβλεψης: null → true → false → null
+  // Toggle Ξ±Ο€ΞΏΟ„Ξ­Ξ»ΞµΟƒΞΌΞ± Ο€ΟΟΞ²Ξ»ΞµΟΞ·Ο‚: null β†’ true β†’ false β†’ null
   async function handleResultEdit(matchId,mktId,sel){
     const key=`${mktId}_${sel.optId}`;
     const cur=results?.[matchId]?.[key];
@@ -1033,8 +1048,8 @@ export default function App(){
     await persistResults(nr);
   }
 
-  if(!currentUser) return <LoginScreen onLogin={u=>{setCurrentUser(u);setTab("matches");}}/>;
-  if(!loaded) return <div style={{minHeight:"100vh",background:"#080f18",display:"flex",alignItems:"center",justifyContent:"center",color:"#3d5566"}}>Φόρτωση...</div>;
+  if(!currentUser) return <LoginScreen onLogin={handleLogin}/>;
+  if(!loaded) return <div style={{minHeight:"100vh",background:"#080f18",display:"flex",alignItems:"center",justifyContent:"center",color:"#3d5566"}}>Ξ¦ΟΟΟ„Ο‰ΟƒΞ·...</div>;
 
   const uc=USERS_CONFIG[currentUser];
   const isAdmin=!!uc.isAdmin;
@@ -1046,10 +1061,10 @@ export default function App(){
       {/* TOPBAR */}
       <div style={{position:"sticky",top:0,zIndex:200,background:"rgba(8,15,24,0.97)",backdropFilter:"blur(16px)",borderBottom:"1px solid #141f2b",padding:"10px 14px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
-          <span style={{fontSize:20}}>⚽</span>
+          <span style={{fontSize:20}}>β½</span>
           <div>
-            <div style={{fontSize:11,fontWeight:800,letterSpacing:0.5}}>ΜΟΥΝΤΙΑΛ 2026</div>
-            <div style={{fontSize:8,color:"#2d4155",letterSpacing:1}}>USA · CAN · MEX · ΩΡΑ ΕΛΛΑΔΟΣ</div>
+            <div style={{fontSize:11,fontWeight:800,letterSpacing:0.5}}>ΞΞΞ¥ΞΞ¤Ξ™Ξ‘Ξ› 2026</div>
+            <div style={{fontSize:8,color:"#2d4155",letterSpacing:1}}>USA Β· CAN Β· MEX Β· Ξ©Ξ΅Ξ‘ Ξ•Ξ›Ξ›Ξ‘Ξ”ΞΞ£</div>
           </div>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
@@ -1059,12 +1074,12 @@ export default function App(){
             {isAdmin&&<span style={{fontSize:9,color:"#ef4444",background:"#ef444420",borderRadius:8,padding:"1px 5px",fontWeight:800}}>ADMIN</span>}
             {!isAdmin&&totalBets>0&&<span style={{fontSize:10,color:uc.color,background:uc.color+"30",borderRadius:10,padding:"0 5px",fontWeight:800}}>{totalBets}</span>}
           </div>
-          <button onClick={()=>setCurrentUser(null)} style={{background:"#141f2b",border:"none",color:"#3d5566",borderRadius:8,padding:"5px 9px",cursor:"pointer",fontSize:11}}>↩</button>
+          <button onClick={handleLogout} style={{background:"#141f2b",border:"none",color:"#3d5566",borderRadius:8,padding:"5px 9px",cursor:"pointer",fontSize:11}}>β†©</button>
         </div>
       </div>
       {/* TABS */}
       <div style={{display:"flex",background:"#0d1a26",borderBottom:"1px solid #141f2b",padding:"0 14px"}}>
-        {[{id:"matches",label:"⚽ Αγώνες"},{id:"coupon",label:"🎫 Δελτίο"},{id:"stats",label:"📊 Στατιστικά"},{id:"bankroll",label:"💰 Κεφάλαιο"}].map(tb=>(
+        {[{id:"matches",label:"β½ Ξ‘Ξ³ΟΞ½ΞµΟ‚"},{id:"coupon",label:"π« Ξ”ΞµΞ»Ο„Ξ―ΞΏ"},{id:"stats",label:"π“ Ξ£Ο„Ξ±Ο„ΞΉΟƒΟ„ΞΉΞΊΞ¬"},{id:"bankroll",label:"π’° ΞΞµΟ†Ξ¬Ξ»Ξ±ΞΉΞΏ"}].map(tb=>(
           <button key={tb.id} onClick={()=>setTab(tb.id)}
             style={{padding:"12px 14px",background:"transparent",border:"none",color:tab===tb.id?uc.color:"#3d5566",fontSize:12,fontWeight:tab===tb.id?700:400,cursor:"pointer",borderBottom:tab===tb.id?`2px solid ${uc.color}`:"2px solid transparent",transition:"all 0.15s",whiteSpace:"nowrap"}}>
             {tb.label}
@@ -1078,7 +1093,7 @@ export default function App(){
       {tab==="coupon"&&(
         <div style={{padding:"14px 14px 100px"}}>
           <div style={{background:"#0d1a26",border:"1px solid #141f2b",borderRadius:12,padding:"10px 14px",marginBottom:14,fontSize:11,color:"#3d5566",lineHeight:1.6}}>
-            🔒 Οι επιλογές άλλου εμφανίζονται μόνο αφού δηλώσετε και οι δύο ετοιμότητα.
+            π”’ ΞΞΉ ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ­Ο‚ Ξ¬Ξ»Ξ»ΞΏΟ… ΞµΞΌΟ†Ξ±Ξ½Ξ―Ξ¶ΞΏΞ½Ο„Ξ±ΞΉ ΞΌΟΞ½ΞΏ Ξ±Ο†ΞΏΟ Ξ΄Ξ·Ξ»ΟΟƒΞµΟ„Ξµ ΞΊΞ±ΞΉ ΞΏΞΉ Ξ΄ΟΞΏ ΞµΟ„ΞΏΞΉΞΌΟΟ„Ξ·Ο„Ξ±.
           </div>
           {ALL_USERS.map(u=>{
             const uConf=USERS_CONFIG[u]; const isMe=u===currentUser;
@@ -1109,16 +1124,16 @@ export default function App(){
                   <div style={{display:"flex",alignItems:"center",gap:10}}>
                     {judged>0&&(
                       <div style={{display:"flex",gap:6,alignItems:"center"}}>
-                        <span style={{fontSize:11,color:"#22c55e",fontWeight:700}}>{won}✓</span>
-                        <span style={{fontSize:11,color:"#ef4444",fontWeight:700}}>{lost}✗</span>
+                        <span style={{fontSize:11,color:"#22c55e",fontWeight:700}}>{won}β“</span>
+                        <span style={{fontSize:11,color:"#ef4444",fontWeight:700}}>{lost}β—</span>
                         <span style={{fontSize:12,fontWeight:800,color:uConf.color}}>{Math.round(won/judged*100)}%</span>
                       </div>
                     )}
-                    {hiddenCnt>0&&<span style={{fontSize:10,color:"#2d4155"}}>·{hiddenCnt}🔒</span>}
+                    {hiddenCnt>0&&<span style={{fontSize:10,color:"#2d4155"}}>Β·{hiddenCnt}π”’</span>}
                   </div>
                 </div>
                 {rows.length===0
-                  ?<div style={{padding:14,color:"#2d4155",fontSize:12}}>Καμία επιλογή ακόμα</div>
+                  ?<div style={{padding:14,color:"#2d4155",fontSize:12}}>ΞΞ±ΞΌΞ―Ξ± ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ® Ξ±ΞΊΟΞΌΞ±</div>
                   :rows.map(({match,mktId,sel,visible,result},idx)=>{
                     const rc=result===true?"#22c55e":result===false?"#ef4444":null;
                     return visible?(
@@ -1127,14 +1142,14 @@ export default function App(){
                           <div style={{fontSize:10,color:"#3d5566",marginBottom:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{match.home.name} vs {match.away.name}</div>
                           <div style={{fontSize:10,color:"#5a7080",marginBottom:3}}>{sel.marketLabel}</div>
                           <span style={{fontSize:11,fontWeight:700,color:rc||uConf.color,background:(rc||uConf.color)+"20",padding:"2px 9px",borderRadius:20}}>
-                            {sel.optLabel}{result===true?" ✓":result===false?" ✗":""}
+                            {sel.optLabel}{result===true?" β“":result===false?" β—":""}
                           </span>
                         </div>
                       </div>
                     ):(
                       <div key={idx} style={{padding:"8px 14px",borderBottom:"1px solid #101820",display:"flex",alignItems:"center",gap:8,opacity:0.3}}>
                         <div style={{flex:1,fontSize:10,color:"#3d5566",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{match.home.name} vs {match.away.name}</div>
-                        <span style={{fontSize:14,color:"#2d4155"}}>🔒</span>
+                        <span style={{fontSize:14,color:"#2d4155"}}>π”’</span>
                       </div>
                     );
                   })
