@@ -1074,7 +1074,7 @@ export default function App(){
             {isAdmin&&<span style={{fontSize:9,color:"#ef4444",background:"#ef444420",borderRadius:8,padding:"1px 5px",fontWeight:800}}>ADMIN</span>}
             {!isAdmin&&totalBets>0&&<span style={{fontSize:10,color:uc.color,background:uc.color+"30",borderRadius:10,padding:"0 5px",fontWeight:800}}>{totalBets}</span>}
           </div>
-          <button onClick={handleLogout} style={{background:"#141f2b",border:"none",color:"#3d5566",borderRadius:8,padding:"5px 9px",cursor:"pointer",fontSize:11}}>↩</button>
+          {isAdmin&&<button onClick={handleLogout} style={{background:"#141f2b",border:"none",color:"#3d5566",borderRadius:8,padding:"5px 9px",cursor:"pointer",fontSize:11}}>↩</button>}
         </div>
       </div>
       {/* TABS */}
