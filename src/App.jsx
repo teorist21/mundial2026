@@ -685,10 +685,13 @@ function StatsTab({allBets,ready,results}){
     MKT_IDS.forEach(id=>{mktStats[id]={total:0,won:0};});
     let total=0,won=0,lost=0;
     Object.entries(betsMap).forEach(([matchId,matchBets])=>{
+      // Μετράμε επιλογές μόνο αν έχουν αποκαλυφθεί σε ΟΛΟΥΣ
+      // δηλαδή ΟΛΑ τα μέλη έχουν δηλώσει ετοιμότητα για αυτό το ματς
+      const allReady = ALL_USERS.every(u => !!ready?.[u]?.[matchId]);
+      if(!allReady) return;
       Object.entries(matchBets).forEach(([mktId,sel])=>{
         if(mktStats[mktId]!==undefined) mktStats[mktId].total++;
         total++;
-        // corners use mktId as optId key, others use optId field
         const key=sel.value?`${mktId}_${mktId}`:`${mktId}_${sel.optId}`;
         const r=results?.[matchId]?.[key];
         if(r===true){ won++; if(mktStats[mktId])mktStats[mktId].won++; }
@@ -774,6 +777,8 @@ function StatsTab({allBets,ready,results}){
                   let w=0,l=0,t=0;
                   const betsMap=allBets?.[user]||{};
                   Object.entries(betsMap).forEach(([matchId,matchBets])=>{
+                    const allReady=ALL_USERS.every(u=>!!ready?.[u]?.[matchId]);
+                    if(!allReady) return;
                     Object.entries(matchBets).forEach(([mktId2,sel])=>{
                       if(!ids.includes(mktId2))return;
                       t++;
