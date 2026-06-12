@@ -28,28 +28,35 @@ function t(code, name) { return { code, name }; }
 /* ══════════════════════════════════════════════════
    MARKETS
 ══════════════════════════════════════════════════ */
-const MKT_IDS = ["1x2","dc","ou","btts","ht","htou","home_ou","away_ou","ggou"];
+const MKT_IDS = ["1x2","dc","ou","btts","ht","htou","home_ou","away_ou","ggou","corners_total","corners_home","corners_away"];
 
 function buildMarkets(home, away) {
   return [
-    { id:"1x2", label:"Τελικό Αποτέλεσμα",
+    { id:"1x2", label:"Τελικό Αποτέλεσμα", type:"buttons",
       options:[{id:"1",label:"1 – "+home.name},{id:"X",label:"Χ – Ισοπαλία"},{id:"2",label:"2 – "+away.name}] },
-    { id:"dc", label:"Διπλή Ευκαιρία",
+    { id:"dc", label:"Διπλή Ευκαιρία", type:"buttons",
       options:[{id:"1X",label:"1X"},{id:"12",label:"12"},{id:"X2",label:"X2"}] },
-    { id:"ou", label:"Γκολ Over/Under",
+    { id:"ou", label:"Γκολ Over/Under", type:"buttons",
       options:[{id:"o15",label:"Over 1.5"},{id:"u15",label:"Under 1.5"},{id:"o25",label:"Over 2.5"},{id:"u25",label:"Under 2.5"},{id:"o35",label:"Over 3.5"},{id:"u35",label:"Under 3.5"}] },
-    { id:"btts", label:"Να σκοράρουν και οι 2",
+    { id:"btts", label:"Να σκοράρουν και οι 2", type:"buttons",
       options:[{id:"gg",label:"GG – Ναι"},{id:"ng",label:"NG – Όχι"}] },
-    { id:"ht", label:"1ο Ημίχρονο – Αποτέλεσμα",
+    { id:"ht", label:"1ο Ημίχρονο – Αποτέλεσμα", type:"buttons",
       options:[{id:"ht1",label:"1 – "+home.name},{id:"htx",label:"Χ – Ισοπαλία"},{id:"ht2",label:"2 – "+away.name}] },
-    { id:"htou", label:"1ο Ημίχρονο – Over/Under",
+    { id:"htou", label:"1ο Ημίχρονο – Over/Under", type:"buttons",
       options:[{id:"hto05",label:"Over 0.5"},{id:"htu05",label:"Under 0.5"},{id:"hto15",label:"Over 1.5"},{id:"htu15",label:"Under 1.5"}] },
-    { id:"home_ou", label:home.name+" – Γκολ Over/Under",
+    { id:"home_ou", label:home.name+" – Γκολ Over/Under", type:"buttons",
       options:[{id:"ho05",label:"Over 0.5"},{id:"hu05",label:"Under 0.5"},{id:"ho15",label:"Over 1.5"},{id:"hu15",label:"Under 1.5"}] },
-    { id:"away_ou", label:away.name+" – Γκολ Over/Under",
+    { id:"away_ou", label:away.name+" – Γκολ Over/Under", type:"buttons",
       options:[{id:"ao05",label:"Over 0.5"},{id:"au05",label:"Under 0.5"},{id:"ao15",label:"Over 1.5"},{id:"au15",label:"Under 1.5"}] },
-    { id:"ggou", label:"Να σκοράρουν και οι 2 ή Over 2.5",
+    { id:"ggou", label:"Να σκοράρουν και οι 2 ή Over 2.5", type:"buttons",
       options:[{id:"ggou_y",label:"Ναι"},{id:"ggou_n",label:"Όχι"}] },
+    { id:"corners", label:"Κόρνερ", type:"corners",
+      subs:[
+        {id:"corners_total", label:"Σύνολο Κόρνερ"},
+        {id:"corners_home",  label:home.name+" – Κόρνερ"},
+        {id:"corners_away",  label:away.name+" – Κόρνερ"},
+      ]
+    },
   ];
 }
 
@@ -213,7 +220,7 @@ const ALL_MATCHES = DAYS.flatMap(d => d.matches);
 
 
 /* ══ HELPERS ══ */
-function canSeeOther(viewer,other,matchId,ready){return ready?.[viewer]?.[matchId]&&ready?.[other]?.[matchId];}
+function canSeeOther(viewer,other,matchId,ready){return !!ready?.[viewer]?.[matchId]&&!!ready?.[other]?.[matchId];}
 
 /* ══════════════════════════════════════════════════
    LOGIN
@@ -320,6 +327,45 @@ function ScoreModal({match,existing,onSave,onDelete,onCancel}){
 }
 
 /* ══════════════════════════════════════════════════
+   CORNER MARKET ROW
+══════════════════════════════════════════════════ */
+function CornerMarketRow({market,matchId,userBets,onSelectCorner}){
+  const [open,setOpen]=useState(false);
+  const anySelected=market.subs.some(s=>userBets?.[matchId]?.[s.id]);
+  return(
+    <div style={{borderBottom:"1px solid #101820",background:anySelected?"rgba(34,197,94,0.03)":"transparent"}}>
+      <button onClick={()=>setOpen(o=>!o)} style={{width:"100%",padding:"12px 16px",background:"transparent",border:"none",display:"flex",alignItems:"center",justifyContent:"space-between",cursor:"pointer",color:anySelected?"#22c55e":"#c9d1d9",fontSize:13,fontWeight:anySelected?600:400,textAlign:"left"}}>
+        <span>Κόρνερ</span>
+        <div style={{display:"flex",alignItems:"center",gap:6,flexShrink:0}}>
+          {anySelected&&<span style={{fontSize:10,background:"#16a34a20",color:"#22c55e",padding:"2px 8px",borderRadius:20,fontWeight:700}}>{market.subs.filter(s=>userBets?.[matchId]?.[s.id]).length} επιλογ.</span>}
+          <span style={{color:"#2d4155",fontSize:15,transform:open?"rotate(180deg)":"rotate(0)",transition:"0.2s"}}>⌄</span>
+        </div>
+      </button>
+      {open&&(
+        <div style={{padding:"4px 16px 14px",display:"flex",flexDirection:"column",gap:12}}>
+          {market.subs.map(sub=>{
+            const sel=userBets?.[matchId]?.[sub.id];
+            const val=sel?.value??"";
+            return(
+              <div key={sub.id}>
+                <div style={{fontSize:11,color:"#5a7080",marginBottom:6,fontWeight:600}}>{sub.label}</div>
+                <div style={{display:"flex",gap:8,alignItems:"center"}}>
+                  <span style={{fontSize:12,color:"#22c55e",fontWeight:700,background:"#16a34a18",padding:"5px 12px",borderRadius:8,flexShrink:0}}>Over</span>
+                  <input type="number" min="0" max="30" placeholder="π.χ. 9" value={val}
+                    onChange={e=>onSelectCorner(matchId,sub,{value:e.target.value})}
+                    style={{width:70,padding:"7px 10px",background:"#0d1a26",border:`1px solid ${val?"#22c55e40":"#253545"}`,borderRadius:8,color:"#fff",fontSize:18,fontWeight:700,textAlign:"center",outline:"none",fontFamily:"monospace"}}/>
+                  {val&&<span style={{fontSize:13,color:"#22c55e",fontWeight:700}}>Over {val}</span>}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════
    MARKET ROW
 ══════════════════════════════════════════════════ */
 function MarketRow({market,matchId,userBets,onSelect}){
@@ -352,34 +398,40 @@ function MarketRow({market,matchId,userBets,onSelect}){
 /* ══════════════════════════════════════════════════
    MATCH CARD
 ══════════════════════════════════════════════════ */
-function MatchCard({match,userBets,allBets,ready,scores,results,matchLocked,currentUser,isAdmin,onSelect,onReady,onUnlock,onScoreEdit,onResultEdit,onMatchLockToggle}){
+function MatchCard({match,userBets,allBets,ready,scores,results,matchLocked,currentUser,isAdmin,onSelect,onSelectCorner,onReady,onUnlock,onScoreEdit,onResultEdit,onMatchLockToggle}){
   const [expanded,setExpanded]=useState(false);
+  const [pendingAbstain,setPendingAbstain]=useState(false);
   const markets=buildMarkets(match.home,match.away);
   const uc=USERS_CONFIG[currentUser];
-  const isLocked=!!ready?.[currentUser]?.[match.id];
+  const myReadyVal=ready?.[currentUser]?.[match.id];
+  const isLocked=!!myReadyVal;
+  const isAbstain=myReadyVal==="abstain";
   const myBets=Object.entries(userBets?.[match.id]||{});
   const allDone=ALL_USERS.every(u=>ready?.[u]?.[match.id]);
   const waiting=ALL_USERS.filter(u=>!ready?.[u]?.[match.id]);
   const score=scores?.[match.id];
-  const matchResults=results?.[match.id]||{};
-  const adminLocked=!!matchLocked?.[match.id]; // admin-locked: no edits to score/results
+  const adminLocked=!!matchLocked?.[match.id];
 
   const othersBets=ALL_USERS.filter(u=>u!==currentUser&&ready?.[u]?.[match.id]).map(u=>({
     user:u,visible:canSeeOther(currentUser,u,match.id,ready),bets:Object.entries(allBets?.[u]?.[match.id]||{})
   }));
-  const canUnlock = isLocked && !allDone && othersBets.length===0;
+  const canUnlock=isLocked&&!allDone&&othersBets.length===0;
 
   function betResultColor(matchId,mktId,sel){
-    const r=results?.[matchId]?.[`${mktId}_${sel.optId}`];
+    const r=results?.[matchId]?.[`${mktId}_${sel.optId||sel.id}`];
     if(r===true) return "#22c55e";
     if(r===false) return "#ef4444";
     return null;
   }
   function betResultIcon(matchId,mktId,sel){
-    const r=results?.[matchId]?.[`${mktId}_${sel.optId}`];
+    const r=results?.[matchId]?.[`${mktId}_${sel.optId||sel.id}`];
     if(r===true) return " \u2713";
     if(r===false) return " \u2717";
     return "";
+  }
+  function betDisplay(sel){
+    if(sel.value) return `Over ${sel.value}`;
+    return sel.optLabel||"";
   }
 
   return(
@@ -424,9 +476,13 @@ function MatchCard({match,userBets,allBets,ready,scores,results,matchLocked,curr
           </div>
         </div>
         <div style={{display:"flex",gap:5,flexWrap:"wrap",alignItems:"center"}}>
-          {isLocked
+          {isLocked&&!isAbstain
             ?<span style={{fontSize:10,padding:"2px 9px",borderRadius:20,background:allDone?"#16a34a18":"#92400e18",color:allDone?"#22c55e":"#F59E0B",fontWeight:700}}>{allDone?"✓ Όλοι Έτοιμοι":"🔒 Εσύ Έτοιμος"}</span>
-            :<span style={{fontSize:10,padding:"2px 9px",borderRadius:20,background:"#141f2b",color:"#3d5566"}}>+ Επιλογές {expanded?"▲":"▼"}</span>
+            :isAbstain
+              ?<span style={{fontSize:10,padding:"2px 9px",borderRadius:20,background:"#A78BFA18",color:"#A78BFA",fontWeight:700}}>🚫 Απέχω</span>
+              :pendingAbstain
+                ?<span style={{fontSize:10,padding:"2px 9px",borderRadius:20,background:"#A78BFA18",color:"#A78BFA",fontWeight:700}}>🚫 Απέχω — επιβεβαίωσε</span>
+                :<span style={{fontSize:10,padding:"2px 9px",borderRadius:20,background:"#141f2b",color:"#3d5566"}}>+ Επιλογές {expanded?"▲":"▼"}</span>
           }
           {ALL_USERS.filter(u=>u!==currentUser&&ready?.[u]?.[match.id]).map(u=>(
             <span key={u} style={{fontSize:10,padding:"2px 9px",borderRadius:20,background:USERS_CONFIG[u].light,color:USERS_CONFIG[u].color,fontWeight:600}}>{u} ✓</span>
@@ -465,19 +521,19 @@ function MatchCard({match,userBets,allBets,ready,scores,results,matchLocked,curr
           </div>
           {myBets.map(([mktId,sel])=>{
             const rc=betResultColor(match.id,mktId,sel);
-            const key=`${mktId}_${sel.optId}`;
+            const key=`${mktId}_${sel.optId||mktId}`;
             const cur=results?.[match.id]?.[key];
             return(
               <div key={mktId} style={{padding:"3px 16px 3px 44px",display:"flex",alignItems:"center",gap:6,marginBottom:2}}>
                 <span style={{fontSize:11,color:"#3d5566",flex:1,minWidth:0,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{sel.marketLabel}</span>
                 <span style={{fontSize:11,fontWeight:700,color:rc||uc.color,background:(rc||uc.color)+"22",padding:"2px 9px",borderRadius:20,whiteSpace:"nowrap",flexShrink:0}}>
-                  {sel.optLabel}{betResultIcon(match.id,mktId,sel)}
+                  {sel.value?`Over ${sel.value}`:sel.optLabel}{betResultIcon(match.id,mktId,sel)}
                 </span>
                 {isAdmin&&(
                   <button
                     onClick={()=>!adminLocked&&onResultEdit(match.id,mktId,sel)}
                     style={{background:cur===true?"#16a34a22":cur===false?"#ef444422":"transparent",border:`1px solid ${cur===true?"#22c55e40":cur===false?"#ef444440":"#253545"}`,borderRadius:6,color:cur===true?"#22c55e":cur===false?"#ef4444":"#4a5568",cursor:adminLocked?"default":"pointer",fontSize:13,padding:"2px 7px",flexShrink:0,opacity:adminLocked?0.4:1}}>
-                    {cur===undefined?"◎":cur===true?"✓":"✗"}
+                    {cur===undefined?"◎":cur===true?"\u2713":"\u2717"}
                   </button>
                 )}
               </div>
@@ -505,13 +561,13 @@ function MatchCard({match,userBets,allBets,ready,scores,results,matchLocked,curr
             </div>
             {visible&&uBets.map(([mktId,sel])=>{
               const rc=betResultColor(match.id,mktId,sel);
-              const key=`${mktId}_${sel.optId}`;
+              const key=`${mktId}_${sel.optId||mktId}`;
               const cur=results?.[match.id]?.[key];
               return(
                 <div key={mktId} style={{padding:"3px 16px 3px 40px",display:"flex",alignItems:"center",gap:6,marginBottom:2}}>
                   <span style={{fontSize:10,color:"#3d5566",flex:1,minWidth:0,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{sel.marketLabel}</span>
                   <span style={{fontSize:11,fontWeight:700,color:rc||uConf.color,background:(rc||uConf.color)+"22",padding:"2px 8px",borderRadius:20,whiteSpace:"nowrap",flexShrink:0}}>
-                    {sel.optLabel}{betResultIcon(match.id,mktId,sel)}
+                    {sel.value?`Over ${sel.value}`:sel.optLabel}{betResultIcon(match.id,mktId,sel)}
                   </span>
                   <button
                     onClick={()=>!adminLocked&&onResultEdit(match.id,mktId,sel)}
@@ -543,7 +599,7 @@ function MatchCard({match,userBets,allBets,ready,scores,results,matchLocked,curr
                 <div key={mktId} style={{padding:"3px 16px 3px 44px",display:"flex",alignItems:"center",gap:6,marginBottom:2}}>
                   <span style={{fontSize:11,color:"#3d5566",flex:1,minWidth:0,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{sel.marketLabel}</span>
                   <span style={{fontSize:11,fontWeight:700,color:rc||uConf.color,background:(rc||uConf.color)+"22",padding:"2px 9px",borderRadius:20,whiteSpace:"nowrap",flexShrink:0}}>
-                    {sel.optLabel}{betResultIcon(match.id,mktId,sel)}
+                    {sel.value?`Over ${sel.value}`:sel.optLabel}{betResultIcon(match.id,mktId,sel)}
                   </span>
                 </div>
               );
@@ -564,14 +620,41 @@ function MatchCard({match,userBets,allBets,ready,scores,results,matchLocked,curr
       {/* ACCORDION ΑΓΟΡΩΝ — όλοι οι χρήστες */}
       {!isLocked&&expanded&&(
         <div style={{borderTop:"1px solid #1a2d3e"}}>
-          {markets.map(m=>(
-            <MarketRow key={m.id} market={m} matchId={match.id} userBets={userBets} onSelect={onSelect}/>
-          ))}
-          <div style={{padding:14}}>
-            <button onClick={e=>{e.stopPropagation();onReady(match);}}
-              style={{width:"100%",padding:12,borderRadius:12,background:"#16a34a",border:"none",color:"#fff",fontSize:14,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
-              🔒 Δήλωση Ετοιμότητας
-            </button>
+          {markets.map(m=>
+            m.type==="corners"
+              ?<CornerMarketRow key={m.id} market={m} matchId={match.id} userBets={userBets} onSelectCorner={onSelectCorner}/>
+              :<MarketRow key={m.id} market={m} matchId={match.id} userBets={userBets} onSelect={onSelect}/>
+          )}
+          {/* Απέχω + Δήλωση Ετοιμότητας */}
+          <div style={{padding:"12px 14px"}}>
+            {!pendingAbstain?(
+              <div style={{display:"flex",gap:8}}>
+                <button onClick={e=>{e.stopPropagation();setPendingAbstain(true);}}
+                  style={{flex:1,padding:12,borderRadius:12,background:"#A78BFA18",border:"1px solid #A78BFA40",color:"#A78BFA",fontSize:13,fontWeight:700,cursor:"pointer"}}>
+                  🚫 Απέχω
+                </button>
+                <button onClick={e=>{e.stopPropagation();onReady(match,false);}}
+                  style={{flex:2,padding:12,borderRadius:12,background:"#16a34a",border:"none",color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
+                  🔒 Δήλωση Ετοιμότητας
+                </button>
+              </div>
+            ):(
+              <div style={{background:"#A78BFA12",border:"1px solid #A78BFA40",borderRadius:12,padding:"12px 14px"}}>
+                <div style={{fontSize:13,color:"#A78BFA",fontWeight:700,marginBottom:10,textAlign:"center"}}>
+                  🚫 Δεν θα κάνεις επιλογές για αυτό το ματς
+                </div>
+                <div style={{display:"flex",gap:8}}>
+                  <button onClick={e=>{e.stopPropagation();setPendingAbstain(false);}}
+                    style={{flex:1,padding:11,borderRadius:10,background:"#1a2535",border:"none",color:"#8a9db0",fontSize:13,fontWeight:600,cursor:"pointer"}}>
+                    Πίσω
+                  </button>
+                  <button onClick={e=>{e.stopPropagation();setPendingAbstain(false);onReady(match,true);}}
+                    style={{flex:2,padding:11,borderRadius:10,background:"#A78BFA",border:"none",color:"#000",fontSize:13,fontWeight:800,cursor:"pointer"}}>
+                    🔒 Δήλωση Ετοιμότητας
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -584,20 +667,20 @@ function MatchCard({match,userBets,allBets,ready,scores,results,matchLocked,curr
 ══════════════════════════════════════════════════ */
 function StatsTab({allBets,ready,results}){
   const MKT_DISPLAY=[
-    {id:"1x2",    label:"Τελικό Αποτέλεσμα", icon:"🏆"},
-    {id:"dc",     label:"Διπλή Ευκαιρία",    icon:"🎯"},
-    {id:"ou",     label:"Over/Under Γκολ",    icon:"⚽"},
-    {id:"btts",   label:"GG/NG",              icon:"🥅"},
-    {id:"ht",     label:"1ο Ημίχ. Αποτέλ.",  icon:"⏱"},
-    {id:"htou",   label:"1ο Ημίχ. Over/Under",icon:"📊"},
-    {id:"home_ou",label:"Γκολ Γηπεδούχου",   icon:"🏠"},
-    {id:"away_ou",label:"Γκολ Φιλοξ.",       icon:"✈️"},
-    {id:"ggou",   label:"GG ή Over 2.5",      icon:"💥"},
+    {id:"1x2",          label:"Τελικό Αποτέλεσμα",   icon:"🏆"},
+    {id:"dc",           label:"Διπλή Ευκαιρία",       icon:"🎯"},
+    {id:"ou",           label:"Over/Under Γκολ",       icon:"⚽"},
+    {id:"btts",         label:"GG/NG",                icon:"🥅"},
+    {id:"ht",           label:"1ο Ημίχ. Αποτέλεσμα",  icon:"⏱"},
+    {id:"htou",         label:"1ο Ημίχ. Over/Under",  icon:"📊"},
+    {id:"home_ou",      label:"Γκολ Γηπεδούχου",      icon:"🏠"},
+    {id:"away_ou",      label:"Γκολ Φιλοξ.",          icon:"✈️"},
+    {id:"ggou",         label:"GG ή Over 2.5",         icon:"💥"},
+    {id:"corners_total",label:"Κόρνερ",                icon:"🚩", mergeIds:["corners_total","corners_home","corners_away"]},
   ];
 
   function calcStats(user){
     const betsMap=allBets?.[user]||{};
-    // per market: {total, won}
     const mktStats={};
     MKT_IDS.forEach(id=>{mktStats[id]={total:0,won:0};});
     let total=0,won=0,lost=0;
@@ -605,7 +688,9 @@ function StatsTab({allBets,ready,results}){
       Object.entries(matchBets).forEach(([mktId,sel])=>{
         if(mktStats[mktId]!==undefined) mktStats[mktId].total++;
         total++;
-        const r=results?.[matchId]?.[`${mktId}_${sel.optId}`];
+        // corners use mktId as optId key, others use optId field
+        const key=sel.value?`${mktId}_${mktId}`:`${mktId}_${sel.optId}`;
+        const r=results?.[matchId]?.[key];
         if(r===true){ won++; if(mktStats[mktId])mktStats[mktId].won++; }
         if(r===false) lost++;
       });
@@ -683,25 +768,24 @@ function StatsTab({allBets,ready,results}){
             <div style={{padding:"10px 16px 14px"}}>
               <div style={{fontSize:10,color:"#3d5566",letterSpacing:1,textTransform:"uppercase",marginBottom:10,fontWeight:600}}>Ανά Αγορά</div>
               {MKT_DISPLAY.map(m=>{
-                const ms=mktStats[m.id]||{total:0,won:0};
-                const hasBets=ms.total>0;
-                const hasResult=ms.won>0||(ms.total>0&&(ms.total-(ms.won))>0);
-                // judged for this market: we need to track lost per market too
-                // Since we only track won in mktStats, compute judged from results
-                // Actually let's compute judged properly
+                // For merged markets (corners), sum across all sub-ids
+                const ids = m.mergeIds || [m.id];
                 const judgedMkt = (() => {
-                  let w=0,l=0;
+                  let w=0,l=0,t=0;
                   const betsMap=allBets?.[user]||{};
                   Object.entries(betsMap).forEach(([matchId,matchBets])=>{
                     Object.entries(matchBets).forEach(([mktId2,sel])=>{
-                      if(mktId2!==m.id)return;
-                      const r=results?.[matchId]?.[`${mktId2}_${sel.optId}`];
+                      if(!ids.includes(mktId2))return;
+                      t++;
+                      const key=sel.value?`${mktId2}_${mktId2}`:`${mktId2}_${sel.optId}`;
+                      const r=results?.[matchId]?.[key];
                       if(r===true)w++;
                       if(r===false)l++;
                     });
                   });
-                  return{w,l,j:w+l};
+                  return{w,l,j:w+l,t};
                 })();
+                const hasBets=judgedMkt.t>0;
                 const barPct = judgedMkt.j>0 ? Math.round(judgedMkt.w/judgedMkt.j*100) : 0;
                 return(
                   <div key={m.id} style={{display:"flex",alignItems:"center",gap:8,marginBottom:8,opacity:hasBets?1:0.3}}>
@@ -716,7 +800,7 @@ function StatsTab({allBets,ready,results}){
                       <span style={{fontSize:11,fontWeight:700,color:hasBets?uc.color:"#2d4155",minWidth:60,textAlign:"right"}}>
                         {judgedMkt.j>0
                           ? `${barPct}% (${judgedMkt.w}/${judgedMkt.j})`
-                          : ms.total>0 ? `${ms.total} εκκρ.` : "–"
+                          : judgedMkt.t>0 ? `${judgedMkt.t} εκκρ.` : "–"
                         }
                       </span>
                     </div>
@@ -892,9 +976,32 @@ function BankrollTab({bankroll,isAdmin,onUpdate}){
 }
 
 
-function MatchesTab({userBets,allBets,ready,scores,results,matchLocked,currentUser,isAdmin,onSelect,onReady,onUnlock,onScoreEdit,onResultEdit,onMatchLockToggle}){
+// Ημερομηνίες κάθε στοιχηματικής ημέρας (DD/MM/YYYY)
+const DAY_DATES = [
+  "11/06/2026","12/06/2026","13/06/2026","14/06/2026","15/06/2026",
+  "16/06/2026","17/06/2026","18/06/2026","19/06/2026","20/06/2026",
+  "21/06/2026","22/06/2026","23/06/2026","24/06/2026","25/06/2026",
+  "26/06/2026","27/06/2026","28/06/2026","29/06/2026","30/06/2026",
+  "01/07/2026","02/07/2026","03/07/2026","04/07/2026","08/07/2026",
+  "10/07/2026","14/07/2026","19/07/2026"
+];
+
+function getInitialDay() {
+  const now = new Date();
+  const today = now.getFullYear()*10000 + (now.getMonth()+1)*100 + now.getDate();
+  // Βρες την πρώτη μέρα που είναι >= σήμερα
+  for (let i = 0; i < DAY_DATES.length; i++) {
+    const parts = DAY_DATES[i].split("/");
+    const d = parseInt(parts[2])*10000 + parseInt(parts[1])*100 + parseInt(parts[0]);
+    if (d >= today) return i;
+  }
+  // Αν έχουν τελειώσει όλα, δείξε την τελευταία
+  return DAY_DATES.length - 1;
+}
+
+function MatchesTab({userBets,allBets,ready,scores,results,matchLocked,currentUser,isAdmin,onSelect,onSelectCorner,onReady,onUnlock,onScoreEdit,onResultEdit,onMatchLockToggle}){
   const uc=USERS_CONFIG[currentUser];
-  const [activeDay,setActiveDay]=useState(0);
+  const [activeDay,setActiveDay]=useState(()=>getInitialDay());
   const day=DAYS[activeDay];
   function dayCnt(d){return d.matches.reduce((a,m)=>a+Object.keys(userBets[m.id]||{}).length,0);}
   return(
@@ -917,7 +1024,8 @@ function MatchesTab({userBets,allBets,ready,scores,results,matchLocked,currentUs
         {day.matches.map(match=>(
           <MatchCard key={match.id} match={match} userBets={userBets} allBets={allBets} ready={ready} scores={scores} results={results} matchLocked={matchLocked} currentUser={currentUser} isAdmin={isAdmin}
             onSelect={(market,option)=>onSelect(market,option,match)}
-            onReady={()=>onReady(match)}
+            onSelectCorner={onSelectCorner}
+            onReady={(m,isAbs)=>onReady(m,isAbs)}
             onUnlock={onUnlock}
             onScoreEdit={onScoreEdit}
             onResultEdit={onResultEdit}
@@ -1008,8 +1116,19 @@ export default function App(){
     await persistBets(nb);
   }
 
-  async function confirmReady(match){
-    const nr={...ready,[currentUser]:{...(ready[currentUser]||{}),[match.id]:true}};
+  // Κόρνερ επιλογή
+  async function handleSelectCorner(matchId,sub,val){
+    if(ready?.[currentUser]?.[matchId])return;
+    const mb={...(allBets?.[currentUser]?.[matchId]||{})};
+    if(!val.value){ delete mb[sub.id]; }
+    else mb[sub.id]={value:val.value,optId:sub.id,marketLabel:sub.label};
+    const nb={...allBets,[currentUser]:{...(allBets[currentUser]||{}),[matchId]:mb}};
+    await persistBets(nb);
+  }
+
+  async function confirmReady(match, isAbstain){
+    const val = isAbstain ? "abstain" : true;
+    const nr={...ready,[currentUser]:{...(ready[currentUser]||{}),[match.id]:val}};
     setPendingReady(null);
     await persistReady(nr);
   }
@@ -1038,7 +1157,8 @@ export default function App(){
 
   // Toggle αποτέλεσμα πρόβλεψης: null → true → false → null
   async function handleResultEdit(matchId,mktId,sel){
-    const key=`${mktId}_${sel.optId}`;
+    // corners use mktId as key, others use optId
+    const key=sel.value?`${mktId}_${mktId}`:`${mktId}_${sel.optId}`;
     const cur=results?.[matchId]?.[key];
     const next = cur===undefined?true : cur===true?false : undefined;
     const matchRes={...(results[matchId]||{})};
@@ -1074,7 +1194,7 @@ export default function App(){
             {isAdmin&&<span style={{fontSize:9,color:"#ef4444",background:"#ef444420",borderRadius:8,padding:"1px 5px",fontWeight:800}}>ADMIN</span>}
             {!isAdmin&&totalBets>0&&<span style={{fontSize:10,color:uc.color,background:uc.color+"30",borderRadius:10,padding:"0 5px",fontWeight:800}}>{totalBets}</span>}
           </div>
-          <button onClick={handleLogout} style={{background:"#141f2b",border:"none",color:"#3d5566",borderRadius:8,padding:"5px 9px",cursor:"pointer",fontSize:11}}>↩</button>
+          {isAdmin&&<button onClick={handleLogout} style={{background:"#141f2b",border:"none",color:"#3d5566",borderRadius:8,padding:"5px 9px",cursor:"pointer",fontSize:11}}>↩</button>}
         </div>
       </div>
       {/* TABS */}
@@ -1087,8 +1207,8 @@ export default function App(){
         ))}
       </div>
 
-      {tab==="matches"&&<MatchesTab userBets={userBets} allBets={allBets} ready={ready} scores={scores} results={results} matchLocked={matchLocked} currentUser={currentUser} isAdmin={!!USERS_CONFIG[currentUser].isAdmin}
-        onSelect={handleSelect} onReady={m=>setPendingReady(m)} onUnlock={handleUnlock} onScoreEdit={m=>setScoreEdit(m)} onResultEdit={handleResultEdit} onMatchLockToggle={handleMatchLockToggle}/>}
+      {tab==="matches"&&<MatchesTab userBets={userBets} allBets={allBets} ready={ready} scores={scores} results={results} matchLocked={matchLocked} currentUser={currentUser} isAdmin={isAdmin}
+        onSelect={handleSelect} onSelectCorner={handleSelectCorner} onReady={(m,isAbs)=>confirmReady(m,isAbs)} onUnlock={handleUnlock} onScoreEdit={m=>setScoreEdit(m)} onResultEdit={handleResultEdit} onMatchLockToggle={handleMatchLockToggle}/>}
 
       {tab==="coupon"&&(
         <div style={{padding:"14px 14px 100px"}}>
@@ -1103,7 +1223,8 @@ export default function App(){
               if(!mb||Object.keys(mb).length===0)return;
               const visible=isMe||canSeeOther(currentUser,u,match.id,ready);
               Object.entries(mb).forEach(([mktId,sel])=>{
-                const r=results?.[match.id]?.[`${mktId}_${sel.optId}`];
+                const key=sel.value?`${mktId}_${mktId}`:`${mktId}_${sel.optId}`;
+                const r=results?.[match.id]?.[key];
                 rows.push({match,mktId,sel,visible,result:r});
               });
             });
@@ -1142,7 +1263,7 @@ export default function App(){
                           <div style={{fontSize:10,color:"#3d5566",marginBottom:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{match.home.name} vs {match.away.name}</div>
                           <div style={{fontSize:10,color:"#5a7080",marginBottom:3}}>{sel.marketLabel}</div>
                           <span style={{fontSize:11,fontWeight:700,color:rc||uConf.color,background:(rc||uConf.color)+"20",padding:"2px 9px",borderRadius:20}}>
-                            {sel.optLabel}{result===true?" ✓":result===false?" ✗":""}
+                            {sel.value?`Over ${sel.value}`:sel.optLabel}{result===true?" \u2713":result===false?" \u2717":""}
                           </span>
                         </div>
                       </div>
@@ -1163,7 +1284,6 @@ export default function App(){
       {tab==="stats"&&<StatsTab allBets={allBets} ready={ready} results={results}/>}
       {tab==="bankroll"&&<BankrollTab bankroll={bankroll} isAdmin={isAdmin} onUpdate={persistBankroll}/>}
 
-      {pendingReady&&<ReadyModal match={pendingReady} betCount={Object.keys(userBets[pendingReady.id]||{}).length} onConfirm={()=>confirmReady(pendingReady)} onCancel={()=>setPendingReady(null)}/>}
       {scoreEdit&&<ScoreModal match={scoreEdit} existing={scores[scoreEdit.id]} onSave={(h,a)=>handleScoreSave(scoreEdit,h,a)} onDelete={()=>handleScoreDelete(scoreEdit)} onCancel={()=>setScoreEdit(null)}/>}
     </div>
   );
